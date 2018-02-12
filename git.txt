@@ -1,0 +1,5 @@
+git remote add origin https://github.com/drsanti/INC382-2018.git
+
+git add .
+git commit -m "note"
+git push -u origin master
