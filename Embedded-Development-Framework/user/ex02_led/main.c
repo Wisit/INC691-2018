@@ -4,9 +4,10 @@ int main(void) {
 
     uint16_t ticks = 0;
 
-	OS_Init();
+    OS_Init();
 
     LED_Set(LED_ID_3);                  // Set LED3
+	
     while(1) {
         
         if( OS_TickedCheck() ) {        // OS tick is activated/ticked every 1 mS
