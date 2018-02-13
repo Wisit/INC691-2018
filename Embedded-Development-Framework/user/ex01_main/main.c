@@ -6,11 +6,11 @@
 
 int main(void) {
     
-	/* Initialization */
+    /* Variables and hardware initialization */
 	
-	OS_Init();
+    OS_Init();	// Initialise the OS
 
-	/* Other OS's functions */
+    /* Other OS's functions */
     
-    OS_Start();
+    OS_Start();	// Start the OS
 }
