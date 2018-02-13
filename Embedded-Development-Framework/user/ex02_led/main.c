@@ -31,5 +31,5 @@ int main(void) {
         }
     }
 
-    OS_Start();
+    OS_Start();      // Not required for this example
 }
