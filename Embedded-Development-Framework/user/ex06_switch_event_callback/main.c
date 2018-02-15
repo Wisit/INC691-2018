@@ -10,10 +10,10 @@ void WorkerOFF(void *param) {
 int main(void) {
 	OS_Init();          // Initialise the OS
 
-    // Register the event of the PSW0
+    //!! Register the event of the PSW0
     OS_SwitchSetCallback(PSW_ID_0, WorkerON);
 
-     // Register the event of the PSW3
+    //!! Register the event of the PSW3
     OS_SwitchSetCallback(PSW_ID_3, WorkerOFF);
 
     OS_Start();         // Start the OS

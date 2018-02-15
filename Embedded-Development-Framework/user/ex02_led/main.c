@@ -4,7 +4,7 @@ int main(void) {
 
     uint16_t ticks = 0;
 
-    OS_Init();
+    OS_Init();                          // Initialize OS
 
     LED_Set(LED_ID_3);                  // Set LED3
 	

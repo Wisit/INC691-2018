@@ -45,18 +45,15 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.11.25503/include/*",
-                "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.11.25503/atlmfc/include/*",
+                "D:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/include/*",
                 "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/um",
                 "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/ucrt",
                 "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/shared",
                 "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/winrt",
-
-                "C:/Program Files (x86)/Microchip/xc16/v1.33/support/generic/h",
-                "C:/Program Files (x86)/Microchip/xc16/v1.33/support/PIC24F/h",
-                "C:/INC691-2018/Embedded-Development-Framework/library/header",
-
-                "${workspaceRoot}"
+                "${workspaceRoot}",
+                "C:/Program Files (x86)/Microchip/xc16/v1.32/support/generic/h",
+                "C:/Program Files (x86)/Microchip/xc16/v1.32/support/PIC24F/h",
+                "${workspaceRoot}/Embedded-Development-Framework/library/header"
             ],
             "defines": [
                 "_DEBUG",
@@ -65,19 +62,15 @@
             "intelliSenseMode": "msvc-x64",
             "browse": {
                 "path": [
-                    "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.11.25503/include/*",
-                    "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.11.25503/atlmfc/include/*",
+                    "D:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/include/*",
                     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/um",
                     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/ucrt",
                     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/shared",
                     "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/winrt",
-
-                    "C:/Program Files (x86)/Microchip/xc16/v1.33/support/generic/h",
-                    "C:/Program Files (x86)/Microchip/xc16/v1.33/support/PIC24F/h",
-                    "C:/INC691-2018/Embedded-Development-Framework/library/header",
-
-
-                    "${workspaceRoot}"
+                    "${workspaceRoot}",
+                    "C:/Program Files (x86)/Microchip/xc16/v1.32/support/generic/h",
+                    "C:/Program Files (x86)/Microchip/xc16/v1.32/support/PIC24F/h",
+                    "${workspaceRoot}/Embedded-Development-Framework/library/header"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

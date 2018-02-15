@@ -128,7 +128,7 @@
     
     #define OS_Init() {                 \
         MCU_Init();                     \
-        UART_Init(UART_ID_1, 115200);    \
+        UART_Init(UART_ID_1, 115200);   \
         UART_Init(UART_ID_2, 115200);   \
         LED_Init();                     \
         ADC_Init();                     \

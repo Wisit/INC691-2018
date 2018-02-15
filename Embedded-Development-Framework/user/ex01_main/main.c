@@ -1,20 +1,20 @@
 #include "os.h"
 
-/* Global variables */
-//...
+//!!Global variables
+//!!...
 
-/* Other Functions  */
-//...
+//!! Other Functions
+//!!...
 
 int main(void) {
     
-    /* Variables and hardware initialization */
-    //...
+    //!!Variables and hardware initialization
+    //!!...
 	
     OS_Init();	// Initialise the OS
 
-    /* Other OS's functions */
-    //...
+    //!!Other OS's functions
+    //!!...
 	
     OS_Start();	// Start the OS
 }
