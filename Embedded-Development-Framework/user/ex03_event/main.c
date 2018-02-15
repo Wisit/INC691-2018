@@ -1,13 +1,11 @@
 #include "os.h"
 
 int main(void) {
-
     int tick_count = 0;
-
 	OS_Init();      // Initialise the OS
     while(1)
     {
-        if( OS_TickedCheck() )
+        if( OS_TickedCheck() )  // Is ticked?
         {
             LED0_Inv();     // Toggle LED0, output freq==500Hz
 
@@ -19,6 +17,5 @@ int main(void) {
             }
         }
     }
-
     OS_Start();      // Not required for this example
 }
