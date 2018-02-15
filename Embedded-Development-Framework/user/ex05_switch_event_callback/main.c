@@ -1,0 +1,20 @@
+#include "os.h"
+
+void WorkerON(void *param) {
+    LED_Set(LED_ID_0);  // Turn ON LED0
+}
+void WorkerOFF(void *param) {
+    LED_Clr(LED_ID_0);   // Turn OFF LED0
+}
+
+int main(void) {
+	OS_Init();          // Initialise the OS
+
+    // Register the event of the PSW0
+    OS_SwitchSetCallback(PSW_ID_0, WorkerON);
+
+     // Register the event of the PSW3
+    OS_SwitchSetCallback(PSW_ID_3, WorkerOFF);
+
+    OS_Start();         // Start the OS
+}
