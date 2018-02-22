@@ -30,7 +30,7 @@ void UartLineCallback(void *evt)
 }
 
 int main(void) {
-	OS_Init();
+    OS_Init();
     
     //!! Register UART1 Line Received Callback
     OS_Uart1SetLineReceivedCallback(UartLineCallback);
