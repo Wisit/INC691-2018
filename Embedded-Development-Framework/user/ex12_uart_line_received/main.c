@@ -17,7 +17,7 @@ void UartLineCallback(void *evt)
     sprintf(buff, "Received %d bytes: %s", uart_data.length, line_data);
     UART1_AsyncWriteString(buff);
 
-    //!! Simple commands to control LED0
+    //!! Simple commands to control LED0 and Beep
     if(!strcmp(line_data, "led0-on\r\n")) {
         LED0_On();      // LED0 ON
     }
