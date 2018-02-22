@@ -159,6 +159,7 @@
     #define UART_AsyncWriteString  Uart_AsyncWriteString
     #define UART_AsyncWriteBytes   Uart_AsyncWriteBytes
 
+    
     #define uart1_async_write_string Uart1_AsyncWriteString
     #define uart1_async_write_bytes  Uart1_AsyncWriteBytes
     #define uart_async_write_string  Uart_AsyncWriteString
