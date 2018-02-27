@@ -5,30 +5,28 @@
  * Update:  05 July 2017, 12.36 PM                          *
  ************************************************************/
 
-
 #ifndef __CONFIG_H__
-#define	__CONFIG_H__
+#define __CONFIG_H__
 
-
-    #include <xc.h>
-    //#include <p24Fxxxx.h>
-    #include <p24FJ48GA002.h>
-    #include <stdio.h>
-    #include <stdint.h>
-    #include <string.h>
+#include <xc.h>
+//#include <p24Fxxxx.h>
+#include <p24FJ48GA002.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 
 #ifndef bool
-    #define bool uint16_t
+#define bool uint16_t
 #endif
 
 typedef uint16_t bool_t;
 
 #ifndef true
-#define true (1)
+#define true    (1)
 #endif
 
 #ifndef false
-#define false (0)
+#define false   (0)
 #endif
 
 //!!
@@ -47,17 +45,17 @@ typedef uint16_t bool_t;
 //##
 //## Buffer/Queue for computer
 //##
-#define U1TX_BUFF_LENGTH 1024 // Computer transmission buffer
+#define U1TX_BUFF_LENGTH 512  // Computer transmission buffer
 #define U1RX_BUFF_LENGTH 64   // Computer receiving buffer
 
 //##
 //## Buffer/Queue for esp8266
 //##
-#define U2TX_BUFF_LENGTH 256  // WiFi transmission buffer
+#define U2TX_BUFF_LENGTH 1024 // WiFi transmission buffer
 #define U2RX_BUFF_LENGTH 1024 // WiFi receiving buffer
 
 //##
-//## These buffers are used for RxReceived of UART1 and UART2 callbacks
+//## These RX buffers are used for RxReceived of UART1 and UART2 callbacks
 //##
 #define U1RX_RING_BUFF_LEN 128  // Computer ring-buffer
 #define U2RX_RING_BUFF_LEN 1024 // WiFi ring-buffer
@@ -73,6 +71,5 @@ typedef uint16_t bool_t;
 
 // ADC
 #define ADC_NUM_CHANNELS 4
-    
-#endif	
 
+#endif

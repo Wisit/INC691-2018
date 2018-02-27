@@ -4,29 +4,21 @@
  *               27 Fubruary, 2018                 *
  * *************************************************
  *      ESP8266 WiFi module, AT command mode       *
- *   This example shows how to connect to network  *
+ *   This example shows how to create HTTP Server  *
  *   The program is implemented using even-driven  *
  *  and callback technique. Each function operates *
  *              as Asynchronous Operation          *
  ***************************************************
  */
 
-//!!*********************************
-//!! Note!
-//!!*********************************
-//!! Before see the code, be sure you know
-//!! how the ESP8266 operates in AT-command mode
-//!! This example is implemented based-on the ECC-OS,
-//!! see ex01 to ex12, for how to working with the ECC-OS
-//!! C-pointers and more reading are really required!!!
 
 #include "os.h" //!! ECC-OS and all utillities functions
 
 //!!*********************************
 //!! Network required parameters
 //!!*********************************
-const char *SSID = "YOUR_WIFI_SSID"; // SSID
-const char *PASS = "YOUR_WIFI_PASS"; // Password
+const char *SSID = "ECC-Mobile"; // SSID
+const char *PASS = "ecclab1122"; // Password
 
 //!!*********************************
 //!! System Indicators
@@ -44,6 +36,8 @@ const char *PASS = "YOUR_WIFI_PASS"; // Password
 //!! detect the SSID or the provided PASS is not corrected
 
 //#define CHECK_WIFI_STATE_FAILED
+
+os_callback_t HttpGetHandler = NULL;
 
 //!!*********************************
 //!! WiFi/Network structure
@@ -155,6 +149,12 @@ void AT_OnCommandTimeout(void *evt)
     Beep(100);         //!! Beep sound
 }
 
+//!! Initialize AT
+void AT_Init(void)
+{
+    at.state = AT_STATE_READY;
+}
+
 //!! Send a command to WiFi module
 void AT_SendCommand(char *command, char *token, uint16_t timeout)
 {
@@ -188,6 +188,13 @@ void Wifi_OnConnected(void *evt)
     Uart1_AsyncWriteString(">> OnConnected\r\n");
 
     //!! Put your code here
+
+    //!! Start server
+    Uart1_AsyncWriteString(">> Starting Server...\r\n");
+    ComdQueue_Put("AT+CIPSERVER=1,80\r\n", "OK\r\n");
+
+    //!! Check IP address
+    ComdQueue_Put("AT+CIFSR\r\n", "OK\r\n");
 }
 
 //!! OnDisconnected callback
@@ -204,11 +211,41 @@ void Wifi_OnDisconnected(void *evt)
 void Wifi_OnFailed(void *evt)
 {
     Uart1_AsyncWriteString(">> OnFailed\r\n");
-
     //!! Reset the Wifi module
     ComdQueue_Put("AT+RST\r\n", "OK\r\n");
 }
 #endif //!! CHECK_WIFI_STATE_FAILED
+
+
+//!!
+//!! Simple HTML page
+//!!
+const char *indexPage = \
+"<html>\
+<head>\
+<style>\
+.red{color:red;}\
+.green{color:green;}\
+.blue{color:blue;}\
+</style>\
+</head>\
+<body>\
+<h3>Welcome to IoT World!</h3>\
+<h4>Supported commands:</h4>\
+<ul>\
+<li class='red'>IP/led0-on</li>\
+<li class='red'>IP/led1-on</li>\
+<li class='red'>IP/led2-on</li>\
+<li class='red'>IP/led3-on</li>\
+<li class='green'>IP/led0-off</li>\
+<li class='green'>IP/led1-off</li>\
+<li class='green'>IP/led2-off</li>\
+<li class='green'>IP/led3-off</li>\
+<li class='blue'>IP/beep</li>\
+</ul>\
+</body>\
+</html>\
+";
 
 //!! Response message (new line) received callback
 void WiFiModuleLineReceived(void *evt)
@@ -216,6 +253,118 @@ void WiFiModuleLineReceived(void *evt)
     //!! Take the received line
     data_t line_data = ((uart_event_t *)evt)->data;
     uint8_t *esp_data = line_data.buffer;
+
+    if (!strcmp((const char *)esp_data, "ERROR\r\n"))
+    {
+        //Uart2_AsyncWriteString("AT+RST\r\n");
+    }
+
+    if (1)
+    {
+        if (str_index_of_first_token((const char *)esp_data, "+IPD,") >= 0)
+        {
+            //!! +IPD,0,468:GET /hello HTTP/1.1
+
+            uint8_t idx1 = str_index_of_first_token((const char *)esp_data, ",") + 1;
+            uint8_t channel = esp_data[idx1] - 0x30;
+
+            #ifdef __DEBUG__
+            static char buff[32];
+            sprintf(buff, ">>Client connected at ch: %d\r\n", channel);
+            Uart1_AsyncWriteString(buff);
+            #endif
+
+            uint8_t idx2 = str_index_of_first_token((const char *)esp_data, "GET /") + 5;
+            uint8_t idx3 = str_index_of_first_token((const char *)esp_data, "HTTP/") - 1;
+
+            #ifdef __DEBUG__
+            sprintf(buff, "idx2:%d idx3:%d\r\n", idx2, idx3);
+            Uart1_AsyncWriteString(buff);
+            #endif
+
+            if (idx2 >= 0 && idx3 >= 0)
+            {
+                //!! Take the GET message
+                static char get[24] = {0};
+                memcpy(get, esp_data + idx2, (idx3 - idx2));
+                get[(idx3 - idx2)] = 0; // NULL terminate
+                
+                #ifdef __DEBUG__
+                Uart1_AsyncWriteString(">>GET: [");
+                Uart1_AsyncWriteString(get);
+                Uart1_AsyncWriteString("]\r\n");
+                #endif
+
+                if (idx2 == idx3)
+                {
+                    //!! GET /
+                    static char cipindex[32];
+                    sprintf(cipindex, "AT+CIPSEND=%d,%d\r\n", channel, strlen(indexPage));
+                    ComdQueue_Put(cipindex, "OK\r\n");
+                    ComdQueue_Put(indexPage, "SEND OK\r\n");
+                }
+                else if (!strstr(get, "favicon.ico"))
+                {
+                    //!! Execute sime commands
+                    if (!strcmp("led0-on", get))
+                    {
+                        LED0_On();
+                    }
+                    else if (!strcmp("led0-off", get))
+                    {
+                        LED0_Off();
+                    }
+                    else if (!strcmp("led1-on", get))
+                    {
+                        LED1_On();
+                    }
+                    else if (!strcmp("led1-off", get))
+                    {
+                        LED1_Off();
+                    }
+                    else if (!strcmp("led2-on", get))
+                    {
+                        LED2_On();
+                    }
+                    else if (!strcmp("led2-off", get))
+                    {
+                        LED2_Off();
+                    }
+                    else if (!strcmp("led3-on", get))
+                    {
+                        LED3_On();
+                    }
+                    else if (!strcmp("led3-off", get))
+                    {
+                        LED3_Off();
+                    }
+                    else if (!strcmp("beep", get))
+                    {
+                        Beep_FreqSet(2000);
+                        Beep(100);
+                    }
+
+                    //!! Create response message
+                    static char message[48];
+                    sprintf(message, "Executed : %s", get);
+                    int16_t mlength = strlen(message);
+
+                    //!! Create CIPSEND
+                    static char cipsend[32];
+                    sprintf(cipsend, "AT+CIPSEND=%d,%d\r\n", channel, mlength);
+                    ComdQueue_Put(cipsend, "OK\r\n");
+
+                    // !!Send response message
+                    ComdQueue_Put(message, "SEND OK\r\n");
+                }
+
+                //!! Close connection, the browser will update after this command
+                static char cipclose[32];
+                sprintf(cipclose, "AT+CIPCLOSE=%d\r\n", channel);
+                ComdQueue_Put(cipclose, "OK\r\n");
+            }
+        }
+    }
 
     //!!
     //!! AT command
@@ -290,7 +439,7 @@ void WiFiModuleLineReceived(void *evt)
 
     //!! Print received line to console/terminal
     Uart1_AsyncWriteString((const char *)esp_data);
-    LED_Flash(LED_ID_0, 5);
+    LED_Flash(LED_ID_3, 1);
 }
 
 //!! Initialize the WiFi module and try to connect to network
@@ -300,21 +449,22 @@ void WiFi_Init(const char *ssid, const char *pass)
     wifi.ssid = ssid;
     wifi.pass = pass;
 
+    Uart1_AsyncWriteString("\r\n>> Conecting to network...\r\n");
+
     //!! Create connection command
     static char cmd[48]; //!! must be static or global
     sprintf(cmd, "AT+CWJAP=\"%s\",\"%s\"\r\n", wifi.ssid, wifi.pass);
+    ComdQueue_Put(cmd, "WIFI GOT IP\r\n");
 
     //!! Send commands to WiFi module
     ComdQueue_Put("ATE0\r\n", "OK\r\n");
-    ComdQueue_Put("AT+CIPMUX=1\r\n", "OK\r\n");
     ComdQueue_Put("AT+CWMODE=1\r\n", "OK\r\n");
-    ComdQueue_Put(cmd, "OK\r\n");
+    ComdQueue_Put("AT+CIPMUX=1\r\n", "OK\r\n");
 }
 
 //!! Main Task/Service
 void MainTask(void *evt)
 {
-
     //!! Task ticks
     static uint32_t ticks = 0;
     static uint16_t disconnected_timeout = 0;
@@ -322,7 +472,7 @@ void MainTask(void *evt)
 
     //!! AT command service
     char *pcomd, *ptoken;
-    if (at.state == AT_STATE_READY || at.state == AT_STATE_TIMEOUT)
+    if (at.state == AT_STATE_READY)
     {
         if (ComdQueue_Get(&pcomd, &ptoken))
         {
@@ -333,6 +483,14 @@ void MainTask(void *evt)
             //!! Send command to WiFi module
             AT_SendCommand(pcomd, ptoken, 10000);
         }
+    }
+    else if (at.state == AT_STATE_TIMEOUT)
+    {
+        //!! Reset module
+        Uart2_AsyncWriteString("AT+RST\r\n");
+
+        //!! Wait long information message sending to console
+        __delay_ms(1000);
     }
 
     //!! Connected
@@ -382,8 +540,14 @@ int main(void)
     //!! Initialize OS
     OS_Init();
 
+    // Initialize AT
+    AT_Init();
+
     //!! Initialize Command Queue
     ComdQueue_Init();
+
+    //!! Beep on boot
+    Beep(100);
 
     //!! Create a timer and register its callback
     OS_TimerCreate("service", 100, 1, MainTask);
