@@ -204,7 +204,7 @@ void Wifi_OnFailed(void *evt) {
 //!! Response message (new line) received callback
 void WiFiModuleLineReceived(void *evt)
 {
-    //!! Take received line
+    //!! Take the received line
     data_t line_data = ((uart_event_t *)evt)->data;
     uint8_t *esp_data = line_data.buffer;
 
@@ -324,7 +324,7 @@ void MainTask(void *evt) {
 
     //!! Connected
     if(wifi.state == WIFI_STATE_CONNECTED) {
-        //!! Connected, LED0 flash 1 Hz
+        //!! Connected, LED3 flash 1 Hz
         if (! (ticks%10))
         {
             LED_Flash(LED_ID_3, 2);
@@ -336,7 +336,7 @@ void MainTask(void *evt) {
     //!! Disconnected
     else if (wifi.state == WIFI_STATE_DISCONNECTED)
     {
-        //!! Disconnected!, LED0 flash 5 Hz
+        //!! Disconnected!, LED3 flash 5 Hz
         if (!(ticks % 2))
         {
             LED_Flash(LED_ID_3, 2);
