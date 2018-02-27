@@ -43,7 +43,7 @@ const char *PASS = "YOUR_WIFI_PASS";    // Password
 //!! The failed state will be occured when the WiFi module cannot
 //!! detect the SSID or the provided PASS is not corrected
 
-//#define CHECK_WIFI_FALED_STATE
+//#define CHECK_WIFI_STATE_FAILED
 
 //!!*********************************
 //!! WiFi/Network structure
@@ -145,8 +145,8 @@ void AT_OnCommandTimeout(void *evt)
     at.timer = NULL;
 
     //!! Report the timeout!
-    Beep_FreqSet(100);
-    Beep(100);
+    Beep_FreqSet(100);  //!! 100 Hz
+    Beep(100);          //!! Beep sound
 }
 
 //!! Send a command to WiFi module
@@ -162,7 +162,7 @@ void AT_SendCommand(char *command, char *token, uint16_t timeout)
     //!! Change at.state, Waiting for Token
     at.state = AT_STATE_TOKEN;
 
-    //!! Create timer of timeout
+    //!! Create timer for timeout checking
     if (at.timer != NULL)
     {
         OS_TimerStop(at.timer);
@@ -192,14 +192,14 @@ void Wifi_OnDisconnected(void *evt) {
 
 //!! OnFailed callback. the Failed event normally occured
 //!! when the WiFi module can not find the SSID on the first boot
-#ifdef CHECK_WIFI_FALED_STATE
+#ifdef CHECK_WIFI_STATE_FAILED
 void Wifi_OnFailed(void *evt) {
     Uart1_AsyncWriteString(">> OnFailed\r\n");
 
     //!! Reset the Wifi module
     ComdQueue_Put("AT+RST\r\n","OK\r\n");
 }
-#endif //!! CHECK_WIFI_FALED_STATE
+#endif //!! CHECK_WIFI_STATE_FAILED
 
 //!! Response message (new line) received callback
 void WiFiModuleLineReceived(void *evt)
@@ -233,14 +233,14 @@ void WiFiModuleLineReceived(void *evt)
             Wifi_OnConnected((void *)0);
         }
 
-        #ifdef CHECK_WIFI_FALED_STATE
+        #ifdef CHECK_WIFI_STATE_FAILED
         else if (!strcmp(esp_data, "FAIL\r\n"))
         {
             //!! Change wifi.state, failed!
             wifi.state = WIFI_STATE_FAILED;
             Wifi_OnFailed((void *)0);
         }
-        #endif //!! CHECK_WIFI_FALED_STATE
+        #endif //!! CHECK_WIFI_STATE_FAILED
     }
     else if (wifi.state == WIFI_STATE_CONNECTED)
     {
@@ -251,16 +251,16 @@ void WiFiModuleLineReceived(void *evt)
             Wifi_OnDisconnected((void *)0);
         }
 
-        #ifdef CHECK_WIFI_FALED_STATE
+        #ifdef CHECK_WIFI_STATE_FAILED
         else if (!strcmp(esp_data, "FAIL\r\n"))
         {
             //!! Change wifi.state, failed!
             wifi.state = WIFI_STATE_FAILED;
             Wifi_OnFailed((void *)0);
         }
-        #endif //!! CHECK_WIFI_FALED_STATE
+        #endif //!! CHECK_WIFI_STATE_FAILED
     }
-    #ifdef CHECK_WIFI_FALED_STATE
+    #ifdef CHECK_WIFI_STATE_FAILED
     else if (wifi.state == WIFI_STATE_FAILED) {
         if (!strcmp(esp_data, "WIFI GOT IP\r\n"))
         {
@@ -275,7 +275,7 @@ void WiFiModuleLineReceived(void *evt)
             Wifi_OnDisconnected((void *)0);
         }
     }
-    #endif //!! CHECK_WIFI_FALED_STATE
+    #endif //!! CHECK_WIFI_STATE_FAILED
 
     //!! Print received line to console/terminal
     Uart1_AsyncWriteString((const char *)esp_data);
@@ -289,7 +289,7 @@ void WiFi_Init(const char *ssid, const char *pass) {
     wifi.pass = pass;
 
     //!! Create connection command
-    static char cmd[48];
+    static char cmd[48];    //!! must be static or global
     sprintf(cmd, "AT+CWJAP=\"%s\",\"%s\"\r\n", wifi.ssid, wifi.pass);
 
     //!! Send commands to WiFi module
@@ -357,6 +357,9 @@ void MainTask(void *evt) {
             WiFi_Init(SSID, PASS);
         }
     }
+    //!!
+    //!! Other services
+    //!!
 }
 
 
@@ -369,8 +372,8 @@ int main(void)
     //!! Initialize Command Queue
     ComdQueue_Init();
 
-    //!! Create a Timer, used as service
-    OS_TimerCreate("main", 100, 1, MainTask);
+    //!! Create a timer and register its callback
+    OS_TimerCreate("service", 100, 1, MainTask);
 
     //!! Register UART2 Line Received Callback
     //!! The WiFi Module is connected to MCU via UART2
