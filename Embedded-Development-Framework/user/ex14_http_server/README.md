@@ -17,7 +17,7 @@ const char *PASS = "YOUR_WIFI_PASS";    // Password
 * **192.168.43.2/led2-on:** Turn on LED2
 * **192.168.43.2/led3-on:** Turn on LED3
 * **192.168.43.2/led0-off:** Turn off LED0
-* **192.168.43.2/led1-off:** Turn off LED0
-* **192.168.43.2/led2-off:** Turn off LED0
-* **192.168.43.2/led3-off:** Turn off LED0
+* **192.168.43.2/led1-off:** Turn off LED1
+* **192.168.43.2/led2-off:** Turn off LED2
+* **192.168.43.2/led3-off:** Turn off LED3
 * **192.168.43.2/beep:** Beep sound
