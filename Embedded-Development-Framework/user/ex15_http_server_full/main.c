@@ -17,8 +17,8 @@
 //!!
 //!! WiFI Netwok connection parameters
 //!!
-const char *SSID = "SSID";  //!! SSID
-const char *PASS = "PASS";  //!! Password
+const char *SSID = "WLRT02";        //!! SSID
+const char *PASS = "WLRT11112";     //!! Password
 
 
 //!!
@@ -731,6 +731,7 @@ int main(void)
     OS_Uart2SetLineReceivedCallback(WiFiLineReceived);
    
     //!! Start OS
+    Beep(120);
     OS_Start();
 }
 
