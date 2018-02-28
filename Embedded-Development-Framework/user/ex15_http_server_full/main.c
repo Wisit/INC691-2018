@@ -324,12 +324,12 @@ bool ExecuteLED(char *getData, char *message) {
 
     //!! leds : Get status of all LEDs
     if(getData[3] == 's') {
-        sprintf(message, "<html><body><h1 style='color:orange;'>\
+        sprintf(message, "<html><body><h1><div style='color:orange;'>\
         LED[0]: %s<br/>\
         LED[1]: %s<br/>\
         LED[2]: %s<br/>\
         LED[3]: %s<br/>\
-        </h1><body></html>", LED0_Get()?"ON":"OFF", LED1_Get()?"ON":"OFF", LED2_Get()?"ON":"OFF", LED3_Get()?"ON":"OFF");
+        </div></h1><body></html>", LED0_Get()?"ON":"OFF", LED1_Get()?"ON":"OFF", LED2_Get()?"ON":"OFF", LED3_Get()?"ON":"OFF");
         return true;    
     }
 
@@ -365,7 +365,7 @@ bool ExecuteLED(char *getData, char *message) {
         return false; 
     }
 
-    sprintf(message, "<html><body><h1 style='color:orange;'>LED[%d]: %s</h1><body></html>", id, status);
+    sprintf(message, "<html><body><h1><div style='color:orange;'>LED[%d]: %s</div></h1><body></html>", id, status);
     return true;
 }
 
@@ -384,12 +384,12 @@ bool ExecutePSW(char *getData, char *message) {
 
     //!! leds : Get status of all PSWs
     if(getData[3] == 's') {
-        sprintf(message, "<html><body><h1 style='color:green;'>\
+        sprintf(message, "<html><body><h1><div style='color:green;'>\
         PSW[0]: %s<br/>\
         PSW[1]: %s<br/>\
         PSW[2]: %s<br/>\
         PSW[3]: %s<br/>\
-        </h1><body></html>", PSW0_Get()?"ON":"OFF", PSW1_Get()?"ON":"OFF", PSW2_Get()?"ON":"OFF", PSW3_Get()?"ON":"OFF");
+        </div></h1><body></html>", PSW0_Get()?"ON":"OFF", PSW1_Get()?"ON":"OFF", PSW2_Get()?"ON":"OFF", PSW3_Get()?"ON":"OFF");
         return true;    
     }
 
@@ -401,7 +401,7 @@ bool ExecutePSW(char *getData, char *message) {
 
     //!! pswx : Get status of PSWx
     const char *status = PSW_Get(id)?"ON":"OFF";
-    sprintf(message, "<html><body><h1 style='color:green;'>PSW[%d]: %s</h1><body></html>", id, status);
+    sprintf(message, "<html><body><h1><div style='color:green;'>PSW[%d]: %s</div></h1><body></html>", id, status);
     return true;
 }
 
@@ -420,12 +420,12 @@ bool ExecuteADC(char *getData, char *message) {
 
     //!! adcs : Get values of all ADCs
     if(getData[3] == 's') {
-        sprintf(message, "<html><body><h1 style='color:blue;'>\
+        sprintf(message, "<html><body><h1><div style='color:blue;'>\
         ADC[0]: %.4d<br/>\
         ADC[1]: %.4d<br/>\
         ADC[2]: %.4d<br/>\
         ADC[3]: %.4d<br/>\
-        </h1><body></html>", ADC0_Get(), ADC1_Get(), ADC2_Get(), ADC3_Get());
+        </div></h1><body></html>", ADC0_Get(), ADC1_Get(), ADC2_Get(), ADC3_Get());
         return true;    
     }
 
@@ -437,7 +437,7 @@ bool ExecuteADC(char *getData, char *message) {
 
     //!! adcx : Get value of an ADCx
     int value = ADC_Get(id);
-    sprintf(message, "<html><body><h1 style='color:blue;'>ADC[%d]: %.4d</h1><body></html>", id, value);
+    sprintf(message, "<html><body><h1><div style='color:blue;'>ADC[%d]: %.4d</div></h1><body></html>", id, value);
     return true;
 }
 
@@ -531,7 +531,7 @@ void MakeResponse(void *evt) {
         bool completed = false;
         os_time_t time = OS_TimeGet();
         if(!strcmp(getData, "time")) {
-            sprintf(message, "<html><body><h1>System Time: %.2d:%.2d:%.2d:%.3d</h1><body></html>", time.hh, time.mm, time.ss, time.ms);
+            sprintf(message, "<html><body><h1><div>System Time: %.2d:%.2d:%.2d:%.3d</div></h1><body></html>", time.hh, time.mm, time.ss, time.ms);
         } 
 
         //!! LED commands
@@ -557,7 +557,7 @@ void MakeResponse(void *evt) {
 
         //!! Generate error message
         if(!completed) {
-            sprintf(message, "<html><body><h1 style='color:red;'>The request \"/%s\" is not supported!</h1><body></html>", getData);
+            sprintf(message, "<html><body><h1><div style='color:red;'>The request \"/%s\" is not supported!</div></h1><body></html>", getData);
         }
 
         //!! Send CIPSEND request
@@ -598,22 +598,25 @@ void MakeResponse(void *evt) {
 void StartServer(void *evt) {
 
     switch(server.state){
+        //!! Server is stopped, kill the timer
         case SERVER_STATE_STOPPED:{
             OS_TimerDelete(server.timer);   
         }break;
 
+        //!! Server is started, apply CIPMUX command
         case SERVER_STATE_PREPARE:{
             //Uart1_AsyncWriteString(">> Preparing to start server...\r\n");
             Uart2_AsyncWriteString("AT+CIPMUX=1\r\n");
         }break;
 
+        //!! Start the server
         case SERVER_STATE_STARTING:{
             //Uart1_AsyncWriteString(">> Starting server...\r\n");
             Uart2_AsyncWriteString("AT+CIPSERVER=1,80\r\n");
         }break;
 
-         case SERVER_STATE_RUNNING:{
-            //Uart1_AsyncWriteString(">> Server is runnin...\r\n");
+        //!! Server is now running
+        case SERVER_STATE_RUNNING:{
             Uart2_AsyncWriteString("AT+CIFSR\r\n");
             OS_TimerDelete(server.timer);
             Beep(30);
