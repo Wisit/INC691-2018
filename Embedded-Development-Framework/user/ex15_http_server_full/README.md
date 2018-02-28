@@ -41,11 +41,3 @@ const char *PASS = "YOUR_WIFI_PASS";    // Password
 * **192.168.43.2/led1inv** Toggle LED1
 * **192.168.43.2/led2inv** Toggle LED2
 * **192.168.43.2/led3inv** Toggle LED3
-
-
-
-
-
-
-
-* **192.168.43.2/beep** Beep sound
