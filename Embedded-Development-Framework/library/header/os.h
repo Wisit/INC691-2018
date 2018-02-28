@@ -128,6 +128,7 @@
     
     #define OS_Init() {                 \
         MCU_Init();                     \
+        __delay_ms(1000);               \
         UART_Init(UART_ID_1, 115200);   \
         UART_Init(UART_ID_2, 115200);   \
         LED_Init();                     \
