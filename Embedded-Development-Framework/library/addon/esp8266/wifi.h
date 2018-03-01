@@ -20,4 +20,5 @@ extern wifi_t wifi;
 void WiFi_Init(const char *SSID, const char *PASS, 
     os_callback_t WiFiConnectedCallback, os_callback_t WiFiDisconnectCallback);
 void WiFi_ProcessLine(const char *line);
+void WiFi_Loop(void *evt);
 #endif

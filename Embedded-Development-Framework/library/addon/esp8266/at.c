@@ -1,16 +1,16 @@
 #include "at.h"
 
-#define __DEBUG_AT__
-
+//!! Uncomment this line to print system information
+// #define __DEBUG_AT__
 
 //!! Global object
 at_command_t atComd;
 
 const char *AtStateMsg[] = {
-    "[0] AT_STATE_WAIT_COMMAND ",
-    "[1] AT_STATE_WAIT_RESPONSE",
-    "[2] AT_STATE_GOT_RESPONSE ",
-    "[3] AT_STATE_WAIT_TIMEOUT "};
+    "[0] AT_STATE_WAIT_COMMAND  ",
+    "[1] AT_STATE_WAIT_RESPONSE ",
+    "[2] AT_STATE_GOT_RESPONSE  ",
+    "[3] AT_STATE_WAIT_TIMEOUT  "};
 
 //!!
 void AT_CommandInit(os_callback_t callback)
@@ -72,9 +72,11 @@ int AT_ProcessLine(const char *line)
         {
             AT_FreeMemory();
             atComd.state = AT_STATE_GOT_RESPONSE;
-
-            OS_TimerDelete(atComd.timer);
             atComd.state = AT_STATE_WAIT_COMMAND;
+        }
+        else if (!strcmp(line, "ready\r\n"))
+        {
+
         }
     }
     return atComd.state;
@@ -111,10 +113,16 @@ void AT_Loop(void *evt)
             //!! Sent the command to ESP8266. The atComd.state will be shanged in
             //! EspLineReceived() or AT_TimeoutCallback()
             atComd.state = AT_STATE_WAIT_RESPONSE;
+
+            
+            Uart1_AsyncWriteString("AT Send: ");
+            Uart1_AsyncWriteString(atComd.currentComd);
+            Uart1_AsyncWriteString("");
+            
             Uart2_AsyncWriteString(atComd.currentComd);
 
             //!! Start the count down timer to check timeout
-            OS_TimerDelete(atComd.timer);
+            //OS_TimerDelete(atComd.timer);
             //atComd.timer = OS_TimerCreate("ATTimeout", 10000, 0, AT_TimeoutCallback);
 
             //!! Command is inserted in queue, speed up the AT_Loop timer to 100 mS
@@ -128,14 +136,15 @@ void AT_Loop(void *evt)
             OS_TimerSetTicks(t, 1000);
         }
     }
-
+    
     if (time.ss != prev_sec)
     {
         //!! 1 second periodically checkinging
         prev_sec = time.ss;
         if (atComd.state == AT_STATE_WAIT_RESPONSE)
         {
-            if (waitingSec++ >= 10)
+            waitingSec++; 
+            if (waitingSec >= 10)
             { //!! 10 seconds timeout! no token, "OK\r\n" is received
                 waitingSec = 0;
                 atComd.state = AT_STATE_WAIT_TIMEOUT;
@@ -145,13 +154,22 @@ void AT_Loop(void *evt)
                     atComd.timeoutCallback((void *)&atComd);
 
                     //!! Fource the state to AT_STATE_WAIT_COMMAND
-                    atComd.state = AT_STATE_WAIT_COMMAND;
+                    //atComd.state = AT_STATE_WAIT_COMMAND;
                 }
             }
+        }
+        else {
+            waitingSec = 0;
         }
 
         #ifdef __DEBUG_AT__
         at_print_debug();
         #endif //!!__DEBUG_AT__
+
+        char buff[48];
+        sprintf(buff, "%.2d:%.2d:%.2d ", time.hh, time.mm, time.ss);
+        Uart1_AsyncWriteString(buff);
+        sprintf(buff, "at.state:   %s [%d]\r\n", AtStateMsg[atComd.state], waitingSec);
+        Uart1_AsyncWriteString(buff);
     }
 }

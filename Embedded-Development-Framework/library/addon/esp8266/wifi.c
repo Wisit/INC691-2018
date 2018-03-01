@@ -1,3 +1,4 @@
+#include "at.h"
 #include "wifi.h"
 
 #define WIFI_STATE_DISCONNECTED 0
@@ -5,9 +6,9 @@
 #define WIFI_STATE_GOT_IP_ADDR  2
 
 const char *WiFiStateMsg[] = {
-    "WIFI_STATE_DISCONNECTED",
-    "WIFI_STATE_CONNECTED",
-    "WIFI_STATE_GOT_IP_ADDR"};
+    "[0] WIFI_STATE_DISCONNECTED",
+    "[1] WIFI_STATE_CONNECTED   ",
+    "[2] WIFI_STATE_GOT_IP_ADDR "};
 
 wifi_t wifi;
 
@@ -30,14 +31,28 @@ void WiFi_ProcessLine(const char *line) {
     {
         if (!strcmp(line, "WIFI CONNECTED\r\n"))
         {
+            //!! Changed from DISCONNECTED to CONNECTED
             wifi.state = WIFI_STATE_CONNECTED;
         }
+        if (!strcmp(line, "FAIL\r\n"))
+        {
+            //!! Reconnected or Reset is required
+            Beep(200);
+            Uart1_AsyncWriteString("Failed, reseting...\r\n");
+
+            //!! The atComd.state is needed to be changed to AT_STATE_WAIT_COMMAND
+            //!! to allow the new command can be sent to the ESP
+            atComd.state = AT_STATE_WAIT_COMMAND;   
+            AT_PutCommand("AT+RST\r\n");
+        }
+        
     }
     //!! WIFI_STATE_CONNECTED
     else if (wifi.state == WIFI_STATE_CONNECTED)
     {
         if (!strcmp(line, "WIFI DISCONNECT\r\n"))
         {
+            //!! Changed from CONNECTED to DISCONNECTED
             wifi.state = WIFI_STATE_DISCONNECTED;
             if (wifi.disconnectedCallback != NULL)
             {
@@ -46,6 +61,7 @@ void WiFi_ProcessLine(const char *line) {
         }
         else if (!strcmp(line, "WIFI GOT IP\r\n"))
         {
+            //!! Changed from CONNECTED to GOT_IP_ADDR
             wifi.state = WIFI_STATE_GOT_IP_ADDR;
             if (wifi.connectedCallback != NULL)
             {
@@ -84,4 +100,32 @@ void WiFi_ProcessLine(const char *line) {
         memcpy(wifi.mac, line + (i1 + 1), nb);
         wifi.mac[nb] = 0; //!! Null terminate
     }
+}
+
+void WiFi_Loop(void *evt) {
+    static uint8_t prev_sec = 0;
+    static uint16_t waitingSec = 0;
+    os_time_t time = OS_TimeGet();
+    if (time.ss != prev_sec)
+    {
+        if (wifi.state == WIFI_STATE_DISCONNECTED) {
+            waitingSec++;
+            if (waitingSec >= 10)
+            {
+                waitingSec = 0;
+                Beep(200);
+                AT_PutCommand("AT+CIFSR\r\n");
+            }
+        }
+        else{
+            waitingSec = 0;
+        }
+
+        char buff[48];
+        sprintf(buff, "%.2d:%.2d:%.2d ", time.hh, time.mm, time.ss);
+        Uart1_AsyncWriteString(buff);
+        sprintf(buff, "wifi.state: %s [%d]\r\n", WiFiStateMsg[wifi.state], waitingSec);
+        Uart1_AsyncWriteString(buff);
+    }
+    prev_sec = time.ss;
 }

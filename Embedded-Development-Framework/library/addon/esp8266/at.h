@@ -14,7 +14,6 @@
 typedef struct
 {
     uint8_t state;                  //!! state
-    timer_t *timer;
     char *pComds[AT_QUEUE_LENGTH];  //!! Array of pointers pointing to commands
     char *currentComd;              //!! Pointer to current command
     os_callback_t timeoutCallback;

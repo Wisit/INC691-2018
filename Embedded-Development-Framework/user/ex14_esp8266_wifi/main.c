@@ -83,7 +83,10 @@ int main(void)
 
     //!! Start the main loop for 100 mS, see in addon/esp8266/at.c
     OS_TimerCreate("AT_Loop", 100, 1, AT_Loop);
-    
+
+    //!! WiFi loop
+    OS_TimerCreate("WiFi_Loop", 100, 1, WiFi_Loop);
+
     //!! Print empty lines
     Uart1_AsyncWriteString("\r\n\r\nex14_esp8266_fifi\r\n");
     Beep(20);
