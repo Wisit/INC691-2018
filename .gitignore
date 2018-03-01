@@ -3,3 +3,4 @@ Embedded-Development-Framework/tools/ecc-pic24-cli
 *.o
 *.map
 *.xml
+*.hex

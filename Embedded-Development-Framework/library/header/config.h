@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
+
 
 #ifndef bool
 #define bool uint16_t

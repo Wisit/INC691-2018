@@ -54,7 +54,8 @@
                 "C:/Program Files (x86)/Microchip/xc16/v1.32/support/generic/h",
                 "C:/Program Files (x86)/Microchip/xc16/v1.32/support/PIC24F/h",
                 "C:/Program Files (x86)/Microchip/xc16/v1.32/include",
-                "${workspaceRoot}/Embedded-Development-Framework/library/header"
+                "${workspaceRoot}/Embedded-Development-Framework/library/header",
+                "${workspaceRoot}/Embedded-Development-Framework/library/addon/esp8266"
             ],
             "defines": [
                 "_DEBUG",
