@@ -59,7 +59,7 @@ void WiFiDisconnectCallback(void *evt)
     //!! WiFi is disconnected
     Uart1_AsyncWriteString("\r\n\r\n");
     Uart1_AsyncWriteString("\r\n*****************************");
-    Uart1_AsyncWriteString("\r\n*      WiFi DISCOMMAND!     *");
+    Uart1_AsyncWriteString("\r\n*     WiFi DISCONNECTED!     *");
     Uart1_AsyncWriteString("\r\n*****************************");
 }
 
