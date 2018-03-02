@@ -2,7 +2,8 @@
  * File:    os.h                                            *
  * Author:  Dr.Santi Nuratch                                *
  *          Embedded Computing and Control Laboratory       *
- * Update:  16 July 2017, 10:09 PM                          *
+ * Update:  16 July  2017, 10:09 PM                         *
+ * Update:  01 March 2018, 22:23 PM                         *
  ************************************************************/
 
 #ifndef __OS_H__
@@ -16,16 +17,38 @@
 #include "uart.h"
 #include "queue.h"
 #include "led.h"
-#include "os.h"
+
 #include "stimer.h"
 #include "worker.h"
 #include "psw.h"
 #include "adc.h"
 #include "beep.h"
-#include "looper.h"
 #include "stdarg.h"
+#include "looper.h"
 
 typedef void (*os_callback_t)(void *);
+
+//!!
+//!! OS_Looper
+//!!
+typedef struct
+{
+    os_callback_t callback;
+    uint16_t sleepTicks;
+    char name[16];
+} looper_t;
+
+void OS_LooperInit(void);
+looper_t *OS_LooperCreate(char *name, os_callback_t callback);
+void OS_LooperSetCallback(looper_t *looper, os_callback_t callback);
+void OS_LooperKill(looper_t *looper);
+void OS_LooperSleep(looper_t *looper, uint16_t sleepTicks);
+void OS_LooperWeakup(looper_t *looper);
+void OS_LooperService(void);
+
+//!!
+//!!
+//!!
 
 #define U1_EVT_RX_RECV 0  // u1 rx byte received
 #define U2_EVT_RX_RECV 1  // u1 rx byte received
