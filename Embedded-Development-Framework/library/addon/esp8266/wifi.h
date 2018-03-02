@@ -12,6 +12,7 @@ typedef struct
     char mac[18]; // 5c:cf:7f:23:e1:08
     os_callback_t connectedCallback;
     os_callback_t disconnectedCallback;
+    os_callback_t stateChangedCallback;
 } wifi_t;
 
 extern const char *WiFiStateMsg[];

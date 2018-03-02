@@ -5,11 +5,6 @@
 const char *SSID = "ECC-Mobile"; //!! SSID
 const char *PASS = "ecclab1122"; //!! Password
 
-//!! Comment this line to disable received line echo
-#define __PRINT_RECEIVED_MESSAGE__
-
-//!! Comment this line to disable beep sound when timeout occured
-#define __BEEP_WHEN_TIMEOUT__
 
 
 //!! ESP8266/UART2 Line Received Callback
@@ -24,21 +19,20 @@ void EspLineReceived(void *evt)
     //!! Process received line for WiFi
     WiFi_ProcessLine(line);
 
-    #ifdef __PRINT_RECEIVED_MESSAGE__
     //!! Print received line
     Uart1_AsyncWriteString("recv: ");
     Uart1_AsyncWriteString(line);
-    #endif //!! __PRINT_RECEIVED_MESSAGE__
+
 }
 
 
 //!! This callback will be called when ESP not response to the last command
 void AtTimeoutCallback(void *evt) {
-
-    #ifdef __BEEP_WHEN_TIMEOUT__
-    //!! Do somthing when timeout!
-    Beep_FreqSet(200); Beep(50);
-    #endif //!!__BEEP_WHEN_TIMEOUT__
+    //!! AT command timeout!
+    Uart1_AsyncWriteString("\r\n\r\n");
+    Uart1_AsyncWriteString("\r\n*****************************");
+    Uart1_AsyncWriteString("\r\n*    AT COMMAND TIMEOUT!    *");
+    Uart1_AsyncWriteString("\r\n*****************************");
 }
 
 
@@ -62,8 +56,11 @@ void WiFiConnectedCallback(void *evt)
 
 void WiFiDisconnectCallback(void *evt)
 {
-    //!! Do somthing disconnected from network
-    Uart1_AsyncWriteString("WiFi Disonnected!!\r\n");
+    //!! WiFi is disconnected
+    Uart1_AsyncWriteString("\r\n\r\n");
+    Uart1_AsyncWriteString("\r\n*****************************");
+    Uart1_AsyncWriteString("\r\n*      WiFi DISCOMMAND!     *");
+    Uart1_AsyncWriteString("\r\n*****************************");
 }
 
 int main(void)

@@ -1,14 +1,17 @@
 #include "at.h"
 #include "wifi.h"
 
-#define WIFI_STATE_DISCONNECTED 0
-#define WIFI_STATE_CONNECTED    1
-#define WIFI_STATE_GOT_IP_ADDR  2
-
+#define WIFI_STATE_DISCONNECTED     0
+#define WIFI_STATE_CONNECTED        1
+#define WIFI_STATE_GOT_IP_ADDR      2
+#define WIFI_STATE_IP_UPDATED       3   //!![3] IP and MAC addresses are filled in the wifi.ip and wifi.mac
+#define WIFI_STATE_FAILED           4
 const char *WiFiStateMsg[] = {
     "[0] WIFI_STATE_DISCONNECTED",
     "[1] WIFI_STATE_CONNECTED   ",
-    "[2] WIFI_STATE_GOT_IP_ADDR "};
+    "[2] WIFI_STATE_GOT_IP_ADDR ",
+    "[3] WIFI_STATE_IP_UPDATED  ",
+    "[4] WIFI_STATE_FAILED      "};
 
 wifi_t wifi;
 
@@ -17,11 +20,19 @@ void WiFi_Init(const char *SSID, const char *PASS,
 {
     wifi.ssid = (char *)SSID;
     wifi.pass = (char *)PASS;
-    wifi.connectedCallback = WiFiConnectedCallback;
+    wifi.connectedCallback    = WiFiConnectedCallback;
     wifi.disconnectedCallback = WiFiDisconnectCallback;
+    wifi.stateChangedCallback = NULL;
     wifi.state = WIFI_STATE_DISCONNECTED;
     wifi.ip[0]  = 0; // Null terminate, make it to empy buffer
     wifi.mac[0] = 0; // Null terminate, make it to empy buffer
+}
+
+#define WiFi_ApplyStateChange(newState) {           \
+    wifi.state = newState;                          \
+    if(wifi.stateChangedCallback != NULL) {         \
+        wifi.stateChangedCallback((void *)&wifi);   \
+    }                                               \
 }
 
 void WiFi_ProcessLine(const char *line) {
@@ -32,17 +43,20 @@ void WiFi_ProcessLine(const char *line) {
         if (!strcmp(line, "WIFI CONNECTED\r\n"))
         {
             //!! Changed from DISCONNECTED to CONNECTED
-            wifi.state = WIFI_STATE_CONNECTED;
+            WiFi_ApplyStateChange(WIFI_STATE_CONNECTED);
         }
         if (!strcmp(line, "FAIL\r\n"))
         {
+            //!! Changed from DISCONNECTED to FAILED
+            WiFi_ApplyStateChange(WIFI_STATE_FAILED);
+
             //!! Reconnected or Reset is required
             Beep(200);
             Uart1_AsyncWriteString("Failed, reseting...\r\n");
 
             //!! The atComd.state is needed to be changed to AT_STATE_WAIT_COMMAND
             //!! to allow the new command can be sent to the ESP
-            atComd.state = AT_STATE_WAIT_COMMAND;   
+            atComd.state = AT_STATE_WAIT_COMMAND;  
             AT_PutCommand("AT+RST\r\n");
         }
         
@@ -53,7 +67,7 @@ void WiFi_ProcessLine(const char *line) {
         if (!strcmp(line, "WIFI DISCONNECT\r\n"))
         {
             //!! Changed from CONNECTED to DISCONNECTED
-            wifi.state = WIFI_STATE_DISCONNECTED;
+            WiFi_ApplyStateChange(WIFI_STATE_DISCONNECTED);
             if (wifi.disconnectedCallback != NULL)
             {
                 wifi.disconnectedCallback((void *)&wifi);
@@ -62,7 +76,7 @@ void WiFi_ProcessLine(const char *line) {
         else if (!strcmp(line, "WIFI GOT IP\r\n"))
         {
             //!! Changed from CONNECTED to GOT_IP_ADDR
-            wifi.state = WIFI_STATE_GOT_IP_ADDR;
+            WiFi_ApplyStateChange(WIFI_STATE_GOT_IP_ADDR);
             if (wifi.connectedCallback != NULL)
             {
                 wifi.connectedCallback((void *)&wifi);
@@ -73,8 +87,8 @@ void WiFi_ProcessLine(const char *line) {
     else if (wifi.state == WIFI_STATE_GOT_IP_ADDR)
     {
         if (!strcmp(line, "WIFI DISCONNECT\r\n"))
-        {
-            wifi.state = WIFI_STATE_DISCONNECTED;
+        {   //!! Changed from WIFI_STATE_GOT_IP_ADDR to WIFI_STATE_DISCONNECTED
+            WiFi_ApplyStateChange(WIFI_STATE_DISCONNECTED);
             if (wifi.disconnectedCallback != NULL)
             {
                 wifi.disconnectedCallback((void *)&wifi);
