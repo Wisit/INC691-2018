@@ -7,7 +7,14 @@ const char *SSID = "ECC-Mobile"; //!! SSID
 const char *PASS = "ecclab1122"; //!! Password
 
 
+
+
+//#define _PRINT_RECEIVED_LINE_
+//#define _PRINT_FIFI_STATE_CHANGED_
+//#define _PRINT_AT_STATE_CHANGED_
+
 //!! Debug: Print WiFi state changed (will be move to wifi.c later)
+#ifdef _PRINT_FIFI_STATE_CHANGED_
 void WiFi_PrintStateChanged(const char *msg) {
     char buff[32];
     os_time_t time = OS_TimeGet();
@@ -19,6 +26,12 @@ void WiFi_PrintStateChanged(const char *msg) {
     Uart1_AsyncWriteString("\r\n********************************");
     Uart1_AsyncWriteString("\r\n");
 }
+#else
+void WiFi_PrintStateChanged(const char *msg)
+{
+    (void)msg;
+}
+#endif
 
 //!! Debug: Print IP and MAC addresses (will be move to wifi.c later)
 void WiFi_PrintIpMac(wifi_t *p) {
@@ -113,6 +126,7 @@ void WiFiStageChangedCallback( void *evt ) {
 
 
 //!! Debug: Print AT state changed (will be moved to at.c later)
+#ifdef _PRINT_AT_STATE_CHANGED_
 void AT_PrintStateChanged(const char *msg)
 {
     char buff[32];
@@ -125,6 +139,11 @@ void AT_PrintStateChanged(const char *msg)
     Uart1_AsyncWriteString("\r\n********************************");
     Uart1_AsyncWriteString("\r\n");
 }
+#else
+void AT_PrintStateChanged(const char *msg) {
+    (void) msg;
+}
+#endif
 
 
 //!! When the AT command's state is changed, this callback function will be called
@@ -208,12 +227,14 @@ void EspLineReceived(void *evt)
     //!! Get received line
     const char *line = (const char *)((uart_event_t *)evt)->data.buffer;
 
+    #ifdef _PRINT_RECEIVED_LINE_
     //!! Print only non empty line
-    //if (strcmp(line, "\r\n"))
+    if (strcmp(line, "\r\n"))
     {
         Uart1_AsyncWriteString("recv: ");
         Uart1_AsyncWriteString(line);
     }
+    #endif
 
     //!! Process received line for AT
     AT_ProcessLine(line);
