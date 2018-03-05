@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "os.h": "c"
+        "os.h": "c",
+        "httpserver.h": "c",
+        "stimer.h": "c"
     }
 }
