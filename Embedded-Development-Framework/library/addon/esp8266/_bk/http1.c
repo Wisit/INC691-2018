@@ -1,7 +1,8 @@
 #include "http.h"
 #include "os.h"
 
-
+const char *SSID = "WLRT02";        //!! SSID
+const char *PASS = "WLRT11112";     //!! Password
 
 
 
@@ -32,7 +33,7 @@ void Client_Init(void)
 }
 
 
-void Server_Init(const char *ssid, const char *pass, server_callback_t callback)
+void Server_Init(void)
 {
     server.target       = NULL;
     server.timer        = NULL;
@@ -41,9 +42,9 @@ void Server_Init(const char *ssid, const char *pass, server_callback_t callback)
     server.nextState    = 0;
     server.nextResType  = AT_RETURN_OK;
     server.timeoutTicks = 0;
-    server.ssid         = ssid;
-    server.pass         = pass;
-    server.callback     = callback;
+    //server.ssid         = ssid;
+    //server.pass         = pass;
+    //server.callback     = callback;
 }
 
 
@@ -178,7 +179,6 @@ void Server_Loop(void *evt) {
         //!! Clear the client
         client->connectionState = CLIENT_STATE_DISCONNECTED;
         client->channel = 0xFF;
-        client->getCommand[0] = 0;
 
         //!! Reset the at
         at.state = AT_STATE_READY;
@@ -218,11 +218,14 @@ void Server_Loop(void *evt) {
 
 void ESPLineReceived(void *evt) {
     
-    //!! buffer for sprintf()
-    char buff[48]; 
+
+    char buff[48]; //!! buffer for sprintf()
 
     //!! Get received line
     const char *line = (const char *)((uart_event_t *)evt)->data.buffer;
+
+    LED_Flash(LED_ID_0, 20);
+
 
     //!! Default return type
     at.returnType = 999;
@@ -436,7 +439,7 @@ void ESP_InitLoop(void *evt) {
     }
     else if( esp.state == 2 ) {
         char buff[48];
-        sprintf(buff, "AT+CWJAP=\"%s\",\"%s\"\r\n", server.ssid, server.pass);
+        sprintf(buff, "AT+CWJAP=\"%s\",\"%s\"\r\n", SSID, PASS);
         at.state = AT_STATE_WAIT_RESPONSE;
         Uart2_AsyncWriteString(buff);
         esp.nextState++;
@@ -504,7 +507,7 @@ void ESP_InitLoop(void *evt) {
 
 
 
-void HTTP_ServerInit(const char *ssid, const char *pass, server_callback_t callback)
+void HTTP_ServerInit(void)
 {
     if(esp.timer != NULL) {
         OS_TimerDelete(esp.timer); 
@@ -516,7 +519,7 @@ void HTTP_ServerInit(const char *ssid, const char *pass, server_callback_t callb
     }
     AT_Init();
     ESP_Init();
-    Server_Init(ssid, pass, callback);
+    Server_Init();
     Client_Init();
    
 

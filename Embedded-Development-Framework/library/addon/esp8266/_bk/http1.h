@@ -15,7 +15,7 @@
 //!!
 //!! Uncomment this line to debug line received
 //!!
-//#define _ESP_LINE_RECEIVED_
+#define _ESP_LINE_RECEIVED_
 
 
 
@@ -32,7 +32,7 @@ typedef void (*server_callback_t)(void *);
 #define AT_RETURN_BUSY              7//(0x0001<<7)     //!! Not ready
 #define AT_RETURN_ERROR             8//(0x0001<<8)     //!! ERROR
 #define AT_RETURN_FAIL              9//(0x0001<<9)     //!! FAILED
-#define AT_RETURN_SEND_FAIL         10//(0x0001<<10)    //!! SEND FILED
+#define AT_RETURN_SEND_FAIL         10//(0x0001<<10)     //!! SEND FILED
 #define AT_RETURN_UNKNOWN           11//(0x0001<<11)    //!! Others
 
 #define AT_STATE_READY              0//(0x0001<<0)
@@ -96,6 +96,6 @@ typedef struct {
 }esp_init_t;
 
 
-void HTTP_ServerInit(const char *ssid, const char *pass, server_callback_t callback);
+void HTTP_ServerInit(void);
 
 #endif
