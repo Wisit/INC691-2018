@@ -378,7 +378,7 @@ void ESPLineReceived(void *evt) {
 
 
 void ESP_InitLoop(void *evt) {
-
+    char buff[48];
     static uint8_t prev_sec = 0;
     if(at.state == AT_STATE_WAIT_RESPONSE) 
     {   
@@ -386,7 +386,7 @@ void ESP_InitLoop(void *evt) {
         if(prev_sec != time.ss) 
         {   
             prev_sec = time.ss;
-            char buff[48];
+            
             ++esp.timeoutTicks;
 
             Uart1_AsyncWriteString("Connecting to SSID:\"");
@@ -450,7 +450,7 @@ void ESP_InitLoop(void *evt) {
     else if( esp.state == 3 ) {
         at.state = AT_STATE_WAIT_RESPONSE;
         Uart2_AsyncWriteString("AT+CIPMUX=1\r\n");
-        //__delay_ms(1000);
+        //__delay_ms(500);
         esp.nextState++;
         esp.state = 0xFF;
 
@@ -493,11 +493,23 @@ void ESP_InitLoop(void *evt) {
         #ifdef _ESP_LINE_RECEIVED_
         Uart1_AsyncWriteString("Done!!\r\n");
         #endif
+
+        if(server.timer != NULL) {
+            OS_TimerDelete(server.timer);
+        }
+        server.timer = OS_TimerCreate("server", 50, 1, Server_Loop);  
     }
     else{
         if(at.state == AT_STATE_GOT_RESPONSE) {
-            esp.state = esp.nextState;
-            at.state = AT_STATE_READY;
+            if(at.returnType == AT_RETURN_OK) {
+                esp.state = esp.nextState;
+                at.state = AT_STATE_READY;
+            }
+            else if(at.returnType == AT_RETURN_ERROR || at.returnType == AT_RETURN_FAIL) {
+                Uart1_AsyncWriteString("\r\nInitialization error at state ");
+                sprintf(buff, "%d\r\n");   
+                Uart1_AsyncWriteString(buff);
+            }
         }
     }
 }
@@ -524,7 +536,7 @@ void HTTP_ServerInit(const char *ssid, const char *pass, server_callback_t callb
     OS_Uart2SetLineReceivedCallback(ESPLineReceived);
     esp.timer = OS_TimerCreate("esp-init", 100, 1, ESP_InitLoop);
 
-    server.timer = OS_TimerCreate("server", 50, 1, Server_Loop);  
+    //server.timer = OS_TimerCreate("server", 50, 1, Server_Loop);  
 
     Beep(20);
 }

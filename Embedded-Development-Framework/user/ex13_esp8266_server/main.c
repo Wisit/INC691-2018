@@ -2,8 +2,8 @@
 #include "os.h"
 #include "http.h"
 
-const char *SSID = "YOUR_SSID";     //!! SSID
-const char *PASS = "YOUR_PASS";     //!! PASSWORD
+const char *SSID = "WLRT02";     //!! SSID
+const char *PASS = "WLRT11112";     //!! PASSWORD
 
 
 //!! Callback function for GET command
