@@ -2,6 +2,7 @@
     "files.associations": {
         "os.h": "c",
         "httpserver.h": "c",
-        "stimer.h": "c"
+        "stimer.h": "c",
+        "server.h": "c"
     }
 }
