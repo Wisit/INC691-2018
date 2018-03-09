@@ -12,7 +12,7 @@ void GetCallback(void *evt)
 
     if(server->client != NULL)
     {
-        server->client->data = "Hello World!";
+        server->client->data = "IKJSHCJKS";
     }
 }
 int main(void) 

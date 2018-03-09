@@ -196,6 +196,19 @@ void Server_Service(void *evt)
         //!! The DATA (frames) are sending, waiting for SEND_OK
         if( !strcmp(line, "SEND OK\r\n") ) 
         {
+            if((uint16_t)client->data < 0x3000) 
+            {   
+                //!! Free only heap
+                //!! Note: the client->data can point to constant string and heap memory
+                //!!       Free only memory located in the heap area (around 0x1F42)
+                sprintf(buff, ">>Free: 0x%.4X\r\n", (uint16_t)client->data);
+                Uart1_AsyncWriteString(buff);
+
+                //!! Free the memory
+                free((void *)client->data);
+            }
+
+
             //!! The SEND_OK is received, send CIPCLOSE
             client->state = CLIENT_STATE_WAIT_CLOSE_OK;
             sprintf( buff, "AT+CIPCLOSE=%d\r\n", client->channel );

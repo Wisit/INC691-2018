@@ -1,7 +1,4 @@
 
-
-
-
 #include "os.h"
 #include "server.h"
 
@@ -25,6 +22,23 @@ const uint8_t   AP_ENCRYPT  = WIFI_AP_ENCRYPT_WPA_PSK;  //!! Encryption type
 //!!       To make the files saved in the cache, just enter IP address of the server 
 //!!       (IP address of Station, not SoftAP) 
 //!!--------------------------------------------------------------------------------------------
+
+
+
+//!! Homepage, 2003 bytes (can be up to 2048 bytes)
+const char * homeHtml = "<html><head><title></title><link rel='icon'href='data:;base64,iVBORw0KGgo='><link rel='stylesheet'href='http://ecc-lab.com/shared/bootstrap.css'><script src='http://ecc-lab.com/shared/jquery.js'></script><script src='http://ecc-lab.com/shared/bootstrap.js'></script><link rel='stylesheet'type='text/css'href='app.css'><script src='app.js'></script></head><body><h1>It Works!</h1><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button></div></div></body></html>";
+
+//!! CSS
+const char * appCss = "h1{color:red;font-size:50px;}";
+
+//!! JS
+const char * appJs  = "setInterval(function(){console.log('Hello');},1000);";
+
+//!! favicon.ico
+const char * faviconIco = "ECC-Lab";
+
+//!!--------------------------------------------------------------
+
 
 
 //!! AT command state changed callback function
@@ -86,13 +100,37 @@ void Client_Requested(void *evt)
 {
     //!! Take the server
     server_t * server = (server_t *)evt;
+    client_t * client = server->client;
 
     //!! Is it come with a client?
     if(server->client != NULL)
     {
+        //!! homepage (index.html or empty)
+        if( !strcmp(client->getBuffer, "") || !strcmp(client->getBuffer, "index.html")  )
+        {
+            client->data = homeHtml;
+        }
+        //!! Get the app.css
+        else if( !strcmp(client->getBuffer, "app.css") ) 
+        {
+            client->data = appCss;
+        }
+        //!! Get the app.js
+        else if( !strcmp(client->getBuffer, "app.js") ) 
+        {
+            client->data = appJs;
+        }
+        //!!Get the favicon.ico
+        else if( !strcmp(client->getBuffer, "favicon.ico") )
+        {
+            client->data = faviconIco;
+        }
+        //!!------------------------------------------------------------------------------
+        //!!
         //!! Check the get command
         //!! The response message can be storaged in heap memory or flash (constant string)
-        if( str_compare(server->client->getBuffer, "adc1") )
+        //!!
+        else if( str_compare(server->client->getBuffer, "adc1") )
         {
             //!! Allocate memory for storing response data
             //!! This memory will be freed after all bytes are sent

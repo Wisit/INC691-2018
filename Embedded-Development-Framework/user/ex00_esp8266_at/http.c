@@ -1,6 +1,7 @@
+#include "http.h"
 
 
-#include "server.h"
+
 
 //!!--------------------------------------------------------------
 
@@ -17,9 +18,6 @@ const char * appJs  = "setInterval(function(){console.log('Hello');},1000);";
 const char * faviconIco = "ECC-Lab";
 
 //!!--------------------------------------------------------------
-
-
-extern wifi_t wifi;
 
 
 //!!
@@ -54,75 +52,9 @@ void Client_Init(void)
 
 
 
-//!! Called by LineReceived
-void Server_CreateClient(const char *line) 
-{
-    //!! Buffer for sprintf();
-    char buff[64];
-
-    //!! Client GET requested
-    //!!
-    //!! Format: +IPD,0,419:GET / HTTP/1.1
-    //!!
-    uint8_t channel = line[5] - 0x30;
-    uint8_t idx1 = str_index_of_first_token( line, "GET /" );
-    uint8_t idx2 = str_index_of_first_token( line, "HTTP/" );
-    if( idx1 < 0 || idx2 < 0 || channel < 0 || channel > 4 ) 
-    {
-        //!! Wrong Format!!
-        sprintf( buff, "\r\nWrong Format! idx1:%d idx2:%d channel:%d\r\n", idx1, idx2, channel );
-        Uart1_AsyncWriteString( buff );
-        return;
-    }
-
-    //!! Take the GET
-    char getBuff[CLIENT_GET_BUFFER_LENGTH + 1];
-    idx1 += 5; idx2 -= 1;
-    uint8_t nb = idx2 - idx1;
-    if( nb >= CLIENT_GET_BUFFER_LENGTH ) 
-    {
-        nb = CLIENT_GET_BUFFER_LENGTH;
-    }
-    memset(getBuff, 0, CLIENT_GET_BUFFER_LENGTH);   //!! clear
-    memcpy( getBuff, (line + idx1), nb );           //!! copy
-    //!!------------------------------------------------------------------
-
-    client_t *c = &clients[channel];
-    if(c->state == CLIENT_STATE_DISCONNECTED)
-    {
-        c->state   = CLIENT_STATE_REQUESTED;
-        c->channel = channel;
-        memset(c->getBuffer, 0, CLIENT_GET_BUFFER_LENGTH);
-        strcpy(c->getBuffer, getBuff);
-    }
-    //!!------------------------------------------------------------------
-
-    os_time_t time = OS_TimeGet();
-    sprintf(buff, "%.2d:%.2d:%.2d:%.3d: ", time.hh, time.mm, time.ss, time.ms);
-    Uart1_AsyncWriteString(buff);
-    Uart1_AsyncWriteString("Requested >> ");
-    sprintf(buff, "CH[%d], GET[%s]\r\n", channel, getBuff);
-    Uart1_AsyncWriteString(buff);
-
-} //!! Server_CreateClient()
-
-
-//!! This service can be called by LineReceived and Timer
+//!! This service can be called by LineReceived and Timer (server.timer)
 void Server_Service(void *evt) 
 {
-
-    const char * line = (const char *)evt;
-
-
-    if( 0 == str_index_of_first_token(line, "+IPD,") ) 
-    {
-        Server_CreateClient(line);
-        //!! Do not return
-    }
-
-
-    //!! Called by Timer
-
     //!! Buffer for sprintf()
     char buff[48];
 
@@ -152,7 +84,8 @@ void Server_Service(void *evt)
     //!! Take current client
     client_t *client = server.client;
 
-  
+    //!! Take received line
+    const char *line = (char *)evt;
 
     //!!
     //!! State machines of the server
@@ -266,20 +199,6 @@ void Server_Service(void *evt)
         //!! The DATA (frames) are sending, waiting for SEND_OK
         if( !strcmp(line, "SEND OK\r\n") ) 
         {
-           
-            if((uint16_t)client->data < 0x3000) 
-            {   
-                //!! Free only heap
-                //!! Note: the client->data can point to constant string and heap memory
-                //!!       Free only memory located in the heap area (around 0x1F42)
-                sprintf(buff, ">>Free: 0x%.4X\r\n", (uint16_t)client->data);
-                Uart1_AsyncWriteString(buff);
-
-                //!! Free the memory
-                free((void *)client->data);
-            }
-
-
             //!! The SEND_OK is received, send CIPCLOSE
             client->state = CLIENT_STATE_WAIT_CLOSE_OK;
             sprintf( buff, "AT+CIPCLOSE=%d\r\n", client->channel );
@@ -346,13 +265,66 @@ void Server_Service(void *evt)
 }
 
 
-//!! This function is called by user level
-void Server_Start(server_callback_t callback)
-{
-    Client_Init();
 
-    //!! Initialise all parameters
-    server.callback = callback;     //!! Callback function
-    server.client   = NULL;         //!! Target client
-    server.wifi     = &wifi;
-} //!! HTTP_ServerInit
+void Http_Service( void *evt )
+{
+
+
+    char buff[48];
+
+    const char *line = (const char *)evt;
+
+    //!! Called by Timer
+    if( line == NULL ) 
+    {  
+        return;
+    }
+
+    //!! Called by LineReceived
+    else if( 0 == str_index_of_first_token(line, "+IPD,") ) 
+    {
+        //!! Client GET requested
+        //!!
+        //!! Format: +IPD,0,419:GET / HTTP/1.1
+        //!!
+        uint8_t channel = line[5] - 0x30;
+        uint8_t idx1 = str_index_of_first_token( line, "GET /" );
+        uint8_t idx2 = str_index_of_first_token( line, "HTTP/" );
+        if( idx1 < 0 || idx2 < 0 || channel < 0 || channel > 4 ) 
+        {
+            //!! Wrong Format!!
+            sprintf( buff, "\r\nWrong Format! idx1:%d idx2:%d channel:%d\r\n", idx1, idx2, channel );
+            Uart1_AsyncWriteString( buff );
+            return;
+        }
+
+        //!! Take the GET
+        char getBuff[CLIENT_GET_BUFFER_LENGTH + 1];
+        idx1 += 5; idx2 -= 1;
+        uint8_t nb = idx2 - idx1;
+        if( nb >= CLIENT_GET_BUFFER_LENGTH ) 
+        {
+            nb = CLIENT_GET_BUFFER_LENGTH;
+        }
+        memset(getBuff, 0, CLIENT_GET_BUFFER_LENGTH);   //!! clear
+        memcpy( getBuff, (line + idx1), nb );           //!! copy
+        //!!------------------------------------------------------------------
+
+        client_t *c = &clients[channel];
+        if(c->state == CLIENT_STATE_DISCONNECTED)
+        {
+            c->state   = CLIENT_STATE_REQUESTED;
+            c->channel = channel;
+            memset(c->getBuffer, 0, CLIENT_GET_BUFFER_LENGTH);
+            strcpy(c->getBuffer, getBuff);
+        }
+        //!!------------------------------------------------------------------
+
+        os_time_t time = OS_TimeGet();
+        sprintf(buff, "%.2d:%.2d:%.2d:%.3d: ", time.hh, time.mm, time.ss, time.ms);
+        Uart1_AsyncWriteString(buff);
+        Uart1_AsyncWriteString("Requested >> ");
+        sprintf(buff, "CH[%d], GET[%s]\r\n", channel, getBuff);
+        Uart1_AsyncWriteString(buff);     
+    }
+}

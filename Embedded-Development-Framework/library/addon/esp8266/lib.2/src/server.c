@@ -1,25 +1,19 @@
-
+/************************************************************
+ * File:    server.c                                        *
+ * Author:  Dr.Santi Nuratch                                *
+ *          Embedded Computing and Control Laboratory       *
+ * Update:  09 March 2018, 06.52 PM                         *
+ * Update:  09 March 2018, 07.11 PM                         *
+ ************************************************************/
 
 #include "server.h"
 
 //!!--------------------------------------------------------------
 
-//!! Homepage, 2003 bytes (can be up to 2048 bytes)
-const char * homeHtml = "<html><head><title></title><link rel='icon'href='data:;base64,iVBORw0KGgo='><link rel='stylesheet'href='http://ecc-lab.com/shared/bootstrap.css'><script src='http://ecc-lab.com/shared/jquery.js'></script><script src='http://ecc-lab.com/shared/bootstrap.js'></script><link rel='stylesheet'type='text/css'href='app.css'><script src='app.js'></script></head><body><h1>It Works!</h1><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button><button class='btn btn-warning'>Warning</button><button class='btn btn-danger'>Danger</button><button class='btn btn-default'>Default</button></div></div><div class'row'><div class'col col-xs-12'><button class='btn btn-primary'>Primary</button><button class='btn btn-success'>Success</button></div></div></body></html>";
-
-//!! CSS
-const char * appCss = "h1{color:red;font-size:50px;}";
-
-//!! JS
-const char * appJs  = "setInterval(function(){console.log('Hello');},1000);";
-
-//!! favicon.ico
-const char * faviconIco = "ECC-Lab";
-
-//!!--------------------------------------------------------------
-
-
+//!!
+//!! WiFi object/variable
 extern wifi_t wifi;
+//!!
 
 
 //!!
@@ -35,7 +29,7 @@ static client_t clients[NUM_CLIENTS];
 
 
 //!! Initialise all parameters of clients
-void Client_Init(void) 
+static void Client_Init(void) 
 {
     uint8_t i;
     client_t *client = clients;
@@ -52,10 +46,8 @@ void Client_Init(void)
 
 
 
-
-
 //!! Called by LineReceived
-void Server_CreateClient(const char *line) 
+static void Server_CreateClient(const char *line) 
 {
     //!! Buffer for sprintf();
     char buff[64];
@@ -162,55 +154,26 @@ void Server_Service(void *evt)
         //!!
         //!! Check requested target
         //!!
+        //!! Set the client to NULL
+        client->data = NULL;
 
-        //!! homepage (index.html or empty)
-        if( !strcmp(client->getBuffer, "") || !strcmp(client->getBuffer, "index.html")  )
+
+        //!! Call the callback function
+        if(server.callback != NULL)
         {
-            client->data = homeHtml;
+            server.callback(&server);
+            //!! In the callback function, the server->client->data = "??" can be applied
         }
-        //!! Get the app.css
-        else if( !strcmp(client->getBuffer, "app.css") ) 
+        //!! If the server->client->data == NULL, send back the Page Not Found!
+        if(client->data == NULL) 
         {
-            client->data = appCss;
-        }
-        //!! Get the app.js
-        else if( !strcmp(client->getBuffer, "app.js") ) 
-        {
-            client->data = appJs;
-        }
-        //!!Get the favicon.ico
-        else if( !strcmp(client->getBuffer, "favicon.ico") )
-        {
-            client->data = faviconIco;
+            client->data = "<html><body><h1 style='color:red;'>Page Not Found!</h1></body></html>";  
+            
+            //!! The client->data can point to a constant staring like this:
+            //!!    client->data = POINTER_TO_STRING;
         }
 
-        //!! Other commands
-        else 
-        {
-            //!!
-            //!! User's GET commands
-            //!!
-
-            //!! Set the client to NULL
-            client->data = NULL;
-
-            //!! Call the callback function
-            if(server.callback != NULL)
-            {
-                server.callback(&server);
-                //!! In the callback function, the server->client->data = "??" can be applied
-            }
-
-            //!! If the server->client->data == NULL, send back the Page Not Found!
-            if(client->data == NULL) 
-            {
-                client->data = "<html><body><h1 style='color:red;'>Page Not Found!</h1></body></html>";  
-                
-                //!! The client->data can point to a constant staring like this:
-                //!!    client->data = POINTER_TO_STRING;
-            }
-        }
-
+        //!!----------------------------------------------------------------------------------------
         //!! Check the maximum payload size, 2048 byte
         if( strlen( client->data ) > 2048 ) 
         {

@@ -1,6 +1,5 @@
-
-#ifndef __SERVER_H__
-#define __SERVER_H__
+#ifndef __HTTP_H__
+#define __HTTP_H__
 
 #include "at.h"
 #include "esp.h"
@@ -40,10 +39,11 @@ typedef struct
 }server_t;
 
 //!!-------------------------------------------------------
+// void HTTP_ServerInit( server_callback_t callback );
+// void HTTP_Service( void *evt );
 
-//void Server_ProcessLine(const char *line);
-void Server_Start(server_callback_t callback);
-void Server_Service(void *evt);
-//void Server_ProcessLine(const char *line);
 
-#endif
+void Server_Service(void *evt) 
+
+
+#endif //!! __HTTP_H__

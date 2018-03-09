@@ -143,7 +143,6 @@ void OS_TimeService(void);
 #define OS_Init()                     \
     {                                 \
         MCU_Init();                   \
-        __delay_ms(1000);             \
         UART_Init(UART_ID_1, 115200); \
         UART_Init(UART_ID_2, 115200); \
         LED_Init();                   \
@@ -152,6 +151,8 @@ void OS_TimeService(void);
         Beep_Init();                  \
         OS_LooperInit();              \
         OS_Initialise();              \
+        __delay_ms(1000);             \
+        UART1_AsyncWriteString("\r\nReady!\r\n");\
     }
 
 #define OS_Start()          \

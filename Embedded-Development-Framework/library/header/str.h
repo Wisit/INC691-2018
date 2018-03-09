@@ -38,7 +38,8 @@
     char *str_sub_string(const char *src, int index, int length, char *out);
     char *str_crop_string(const char *src, int start, int stop, char *out);
     
-    
+    #define str_compare(s1, s2) (!strcmp(s1, s2))
+
     // converter
     int str_to_int(char *src);
 #endif	
