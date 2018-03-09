@@ -57,7 +57,7 @@ OPTIONAL(-lfx)
 */
 MEMORY
 {
-  data  (a!xr)   : ORIGIN = 0x800,         LENGTH = 0x2000
+  data  (a!xr)   : ORIGIN = 0x800,         LENGTH = 0x2000 /* 0x2000 == 8k */
   reset          : ORIGIN = 0x0,           LENGTH = 0x4
   ivt            : ORIGIN = 0x4,           LENGTH = 0xFC
   _reserved      : ORIGIN = 0x100,         LENGTH = 0x4
