@@ -1,8 +1,10 @@
 #ifndef __WIFI_H__
 #define __WIFI_H__
 
-#include "esp.h"
+#include "os.h"
 
+
+//-------------------------------------------------------
 
 
 #define WIFI_AP_CHANNEL_0               0
@@ -20,14 +22,23 @@
 
 
 //!! WiFi modes
-#define WIFI_MODE_STATION           0x01   //!! Station only
-#define WIFI_MODE_SOFT_AP           0x02   //!! Access point (AP) or Host
-#define WIFI_MODE_AP_STATION        0x03   //!! Botr Station and AP
+#define WIFI_MODE_STATION               0x01   //!! Station only
+#define WIFI_MODE_SOFT_AP               0x02   //!! Access point (AP) or Host
+#define WIFI_MODE_AP_STATION            0x03   //!! Botr Station and AP
 
+
+
+
+
+
+
+//-------------------------------------------------------
 
 #define WIFI_STATE_DISCONNECTED     0
 #define WIFI_STATE_CONNECTED        1
-#define WIFI_STATE_GOT_IP_ADDR      2
+#define WIFI_STATE_GOT_IP           2
+#define WIFI_STATE_STARTING_SRV     3
+#define WIFI_STATE_SERVER_RUNNING   4
 
 typedef struct 
 {
@@ -38,20 +49,16 @@ typedef struct
     uint8_t         mode;               //!! Operation mode
     char            ip[16];             //!! xxx.xxx.xxx.xxx
     char            mac[18];            //!! 5c:cf:7f:23:e1:08 
-
     //!!----------------------------
     const char      *ap_ssid;           //!! Pointer to AP_SSID
     const char      *ap_pass;            //!! Pointer to AP_PASS
     const char      *ap_ip;             //!! Pointer to AP_IP_ADDRESS
     uint8_t          ap_chan;           //!! Cnannel [0, 4]
     uint8_t          ap_encr;           //!! Operation mode [0, 2, 3, 4]
-
 }wifi_t;
 
-void WiFi_InitStation( const char *ssid, const char *pass, uint8_t mode );
+void WiFi_Service(void); 
+void WiFi_ProcessLine(const char *line); 
+void WiFi_Init(const char *ssid, const char *pass, uint8_t mode);
 void WiFi_InitSoftAP( const char *ap_ssid, const char *ap_pass, const char *ap_ip, uint8_t ap_chan, uint8_t ap_encr );
-void WiFi_Start( os_callback_t callback );
-void WiFi_Service( void *evt );
-
-
 #endif //!! __WIFI_H__

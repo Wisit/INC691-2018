@@ -5,40 +5,42 @@
 wifi_t wifi;
 
 
-#define WiFi_ApplyStateChanged(newState) {  \
-    wifi.state = newState;                  \
-    if( wifi.callback != NULL ) {           \
-        wifi.callback(&wifi);               \
-    }                                       \
-}
+// #define WiFi_ApplyStateChanged(newState) {  \
+//     wifi.state = newState;                  \
+//     if( wifi.callback != NULL ) {           \
+//         wifi.callback(&wifi);               \
+//     }                                       \
+// }
 
-static void WiFi_StartServer(void) 
-{
-    AT_Put( "AT+CIPMUX=1\r\n" ); 
-    AT_Put( "AT+CIPSERVER=1,80\r\n" );
+// static void WiFi_StartServer(void) 
+// {
+//     AT_Put( "AT+CIPMUX=1\r\n" ); 
+//     AT_Put( "AT+CIPSERVER=1,80\r\n" );
 
-    //!! Ask for IP and MAC addresses of the ICP/IP server
-    AT_Put( "AT+CIFSR\r\n" );
-}// !! WiFi_StartServer()
+//     //!! Ask for IP and MAC addresses of the ICP/IP server
+//     AT_Put( "AT+CIFSR\r\n" );
+// }// !! WiFi_StartServer()
 
-static void WiFi_StartSoftAP(void)
-{
-    if( ( wifi.mode & WIFI_MODE_SOFT_AP ) != 0) 
-    {
-        char *pBuff = malloc( strlen(wifi.ap_ssid) + strlen(wifi.ap_pass) + 22 );
-        sprintf( pBuff, "AT+CWSAP=\"%s\",\"%s\",%d,%d\r\n", wifi.ap_ssid, wifi.ap_pass, wifi.ap_chan, wifi.ap_encr );
-        AT_Put( pBuff );
+// static void WiFi_StartSoftAP(void)
+// {
+//     if( ( wifi.mode & WIFI_MODE_SOFT_AP ) != 0) 
+//     {
+//         char *pBuff = malloc( strlen(wifi.ap_ssid) + strlen(wifi.ap_pass) + 22 );
+//         sprintf( pBuff, "AT+CWSAP=\"%s\",\"%s\",%d,%d\r\n", wifi.ap_ssid, wifi.ap_pass, wifi.ap_chan, wifi.ap_encr );
+//         AT_Put( pBuff );
 
-        char *pSoftIp = malloc(48);
-        sprintf( pSoftIp, "AT+CIPAP=\"%s\"\r\n", wifi.ap_ip );
-        AT_Put( pSoftIp );
+//         char *pSoftIp = malloc(48);
+//         sprintf( pSoftIp, "AT+CIPAP=\"%s\"\r\n", wifi.ap_ip );
+//         AT_Put( pSoftIp );
 
 
-        //!! Ask of AP_SSID and AP_IP of the SoftAP
-        AT_Put( "AT+CWSAP?\r\n" ); 
-        AT_Put( "AT+CIPAP?\r\n" ); 
-    }
-} // WiFi_StartSoftAP()
+//         //!! Ask of AP_SSID and AP_IP of the SoftAP
+//         AT_Put( "AT+CWSAP?\r\n" ); 
+//         AT_Put( "AT+CIPAP?\r\n" ); 
+//     }
+// } // WiFi_StartSoftAP()
+
+
 
 static void WiFi_UpdateIpMac(const char *line)
 {

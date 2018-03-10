@@ -41,20 +41,20 @@ typedef struct {
 typedef struct {
     uint8_t    state;
     char       *pComd;
-    uint8_t    curSec;
-    uint8_t    prvSec;
+    uint16_t    curSec;
+    uint16_t    prvSec;
     uint8_t    timeoutTicks;
     uint8_t    targetCode;
     uint8_t    returnCode;
-    os_callback_t callback;
 }at_command_t;
 
-void AT_Init(os_callback_t callback);
+void AT_Init(void);
 bool AT_Put(const char *pComd);
 bool AT_Get(char **ppComd);
 
+void AT_CleanMemory(void);  //!! Clean all blocks of memories
 
-//void AT_FreeMemory(void);
-void AT_Service(void *evt);
+void AT_ProcessLine(const char *line); 
+void AT_Service(void);
 
-#endif
+#endif //!! __AT_COMMAND_H__

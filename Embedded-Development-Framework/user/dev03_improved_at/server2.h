@@ -1,15 +1,10 @@
-
 #ifndef __SERVER_H__
 #define __SERVER_H__
 
-#include "at.h"
-#include "esp.h"
-#include "wifi.h"
+#include "os.h"
+#include "wifi2.h"
 
-
-//!!-------------------------------------------------------
-
-#define NUM_CLIENTS                 5
+#define NUM_CLIENTS                 8
 #define CLIENT_GET_BUFFER_LENGTH    32
 
 #define CLIENT_STATE_DISCONNECTED    0
@@ -31,19 +26,21 @@ typedef struct {
 
 typedef void (*server_callback_t)(void *);
 
+#define SERVER_STATE_STOPPED  0
+#define SERVER_STATE_RUNNING  1
+
 typedef struct 
 {   
+    uint8_t     state;
     timer_t    *timer;
     client_t   *client;
     wifi_t     *wifi;
     server_callback_t callback;
 }server_t;
 
-//!!-------------------------------------------------------
+void Server_Init(const char *ssid, const char *pass, uint8_t mode, os_callback_t callback);
 
-//void Server_ProcessLine(const char *line);
-void Server_Start(server_callback_t callback);
 void Server_Service(void *evt);
-//void Server_ProcessLine(const char *line);
+void Server_ProcessLine(const char *line);
 
-#endif
+#endif //!! __SERVER_H__
