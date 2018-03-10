@@ -2,8 +2,8 @@
 #include "os.h"
 #include "server.h"
 
-const char *SSID = "WLRT02";            //!! SSID
-const char *PASS = "WLRT11112";         //!! PASS
+const char *SSID = "ECC-Mobile";            //!! SSID
+const char *PASS = "ecclab1122";         //!! PASS
 
 
 void GetCallback(void *evt) 

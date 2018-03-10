@@ -1,10 +1,3 @@
-/************************************************************
- * File:    wifi.h                                          *
- * Author:  Dr.Santi Nuratch                                *
- *          Embedded Computing and Control Laboratory       *
- * Update:  09 March 2018, 06.53 PM                         *
- ************************************************************/
-
 #ifndef __WIFI_H__
 #define __WIFI_H__
 

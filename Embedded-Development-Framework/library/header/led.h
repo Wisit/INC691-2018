@@ -157,18 +157,15 @@ void LED_PwmSetPeriod(uint8_t id, uint16_t period_ticks);
 #define led_pwm_set_period  LED_PwmSetPeriod
 
 void LED_PwmSetOnTime(uint8_t id, uint16_t on_ticks);
-#define led_pwm_set_on_time LED_PwmSetOnTime
-
-
-/* Set Shift Ticks of PWM */
 void LED_PwmSetShift(uint8_t id, uint16_t shift_ticks);
-#define led_pwm_set_shif    LED_PwmSetShift
+
 
 void LED_Flash(uint8_t id, uint16_t on_ticks);
-#define led_flash   LED_Flash
 
-//!! Internal function, DO NOT use this function!
 void LED_Service(void);
+
+
+
 
 #endif	
 

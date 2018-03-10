@@ -24,6 +24,9 @@ void SwitchCallback(void *param) {
 int main(void) {
 	OS_Init();          // Initialise the OS
 
+    Uart1_AsyncWriteString("Press PSW and check the result on the terminal\r\n");
+    Beep(100);
+
     //!! Register the event of the PSW0
     //OS_SwitchSetCallback(PSW_ID_0, SwitchCallback);
 
@@ -42,6 +45,8 @@ int main(void) {
     for(id=0; id<4; id++) {
         OS_SwitchSetCallback(id, SwitchCallback);
     }
+
+    
 
     OS_Start();         // Start the OS
 }

@@ -2,7 +2,8 @@
  * File:    uart.h                                          *
  * Author:  Dr.Santi Nuratch                                *
  *          Embedded Computing and Control Laboratory       *
- * Update:  12 July 2017, 03:08 PM                          *
+ * Update:  12 July  2017, 03.08 PM                         *
+ * Update:  10 March 2018, 08.29 AM                         *
  ************************************************************/
 
 #ifndef _UART_H_
@@ -159,7 +160,6 @@
     #define UART_AsyncWriteString  Uart_AsyncWriteString
     #define UART_AsyncWriteBytes   Uart_AsyncWriteBytes
 
-    
     #define uart1_async_write_string Uart1_AsyncWriteString
     #define uart1_async_write_bytes  Uart1_AsyncWriteBytes
     #define uart_async_write_string  Uart_AsyncWriteString
@@ -167,6 +167,20 @@
 
     void Uart1_ClearRingBuffer(void);
     void Uart2_ClearRingBuffer(void);
+    
+    
+    //-----------------------
+    void Uart1_WriteString(const char *str);
+    void Uart2_WriteString(const char *str);
+
+    void Uart1_PutByte(const unsigned char data);
+    void Uart2_PutByte(const unsigned char data);
+
+    void Uart1_WriteBytes(const unsigned char *data, unsigned int length);
+    void Uart2_WriteBytes(const unsigned char *data, unsigned int length);
+
+    unsigned char Uart1_GetByte(void);
+    unsigned char Uart2_GetByte(void);
     
 #endif
 

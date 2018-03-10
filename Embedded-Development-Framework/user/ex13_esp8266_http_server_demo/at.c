@@ -1,6 +1,6 @@
 
 #include "at.h"
-
+#include "stdlib.h"
 
 #define AT_RETURN_READY     0       //!! Module ready
 #define AT_RETURN_OK        1       //!! Command is executed

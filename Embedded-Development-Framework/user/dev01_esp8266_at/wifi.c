@@ -1,10 +1,3 @@
-/************************************************************
- * File:    wifi.c                                          *
- * Author:  Dr.Santi Nuratch                                *
- *          Embedded Computing and Control Laboratory       *
- * Update:  09 March 2018, 06.53 PM                         *
- ************************************************************/
-
 #include "wifi.h"
 
 

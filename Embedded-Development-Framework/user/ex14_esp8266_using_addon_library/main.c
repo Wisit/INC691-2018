@@ -4,8 +4,8 @@
 
 //!!--------------------------------------------------------------------------------------------
 //!! Network
-const char      *SSID       = "WLRT02";                 //!! SSID
-const char      *PASS       = "WLRT11112";              //!! PASS
+const char      *SSID       = "ECC-Mobile";                 //!! SSID
+const char      *PASS       = "ecclab1122";              //!! PASS
 
 //!!--------------------------------------------------------------------------------------------
 //!! SoftAP
@@ -120,7 +120,7 @@ void Client_Requested(void *evt)
         //!! Check the get command
         //!! The response message can be storaged in heap memory or flash (constant string)
         //!!
-        else if( str_compare(server->client->getBuffer, "adc1") )
+        else if (!strcmp(server->client->getBuffer, "adc1"))
         {
             //!! Allocate memory for storing response data
             //!! This memory will be freed after all bytes are sent
@@ -138,7 +138,7 @@ void Client_Requested(void *evt)
             server->client->data = buff;//"HELLO WORLD!";
 
         }
-        else if( str_compare(server->client->getBuffer, "led3-inv") )
+        else if (!strcmp(server->client->getBuffer, "led3-inv"))
         {
             //!! Toggle the LED3
             LED3_Inv();

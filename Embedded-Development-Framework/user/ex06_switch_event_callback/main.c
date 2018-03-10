@@ -10,6 +10,9 @@ void WorkerOFF(void *param) {
 int main(void) {
 	OS_Init();          // Initialise the OS
 
+    Uart1_AsyncWriteString("Press PSW and check the result on the LED0\r\n");
+    Beep(1000);
+
     //!! Register the event of the PSW0
     OS_SwitchSetCallback(PSW_ID_0, WorkerON);
 

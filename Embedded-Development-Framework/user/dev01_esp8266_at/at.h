@@ -1,10 +1,3 @@
-/************************************************************
- * File:    at.c                                            *
- * Author:  Dr.Santi Nuratch                                *
- *          Embedded Computing and Control Laboratory       *
- * Update:  09 March 2018, 06.52 PM                         *
- ************************************************************/
-
 
 #ifndef __AT_COMMAND_H__
 #define __AT_COMMAND_H__

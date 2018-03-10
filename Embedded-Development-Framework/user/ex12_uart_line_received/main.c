@@ -10,7 +10,7 @@ void UartLineCallback(void *evt)
     data_t uart_data = uart_event->data;
 
     //!! Line data
-    uint8_t *line_data = uart_data.buffer;
+    const char *line_data = (const char *)uart_data.buffer;
 
     //!! Print received data
     char buff[32];

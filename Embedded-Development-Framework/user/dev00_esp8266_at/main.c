@@ -1,11 +1,14 @@
 
+
+
+
 #include "os.h"
 #include "server.h"
 
 //!!--------------------------------------------------------------------------------------------
 //!! Network
-const char      *SSID       = "WLRT02";                 //!! SSID
-const char      *PASS       = "WLRT11112";              //!! PASS
+const char      *SSID       = "ECC-Mobile";                 //!! SSID
+const char      *PASS       = "ecclab1122";              //!! PASS
 
 //!!--------------------------------------------------------------------------------------------
 //!! SoftAP
@@ -22,13 +25,6 @@ const uint8_t   AP_ENCRYPT  = WIFI_AP_ENCRYPT_WPA_PSK;  //!! Encryption type
 //!!       To make the files saved in the cache, just enter IP address of the server 
 //!!       (IP address of Station, not SoftAP) 
 //!!--------------------------------------------------------------------------------------------
-
-
-
-#include "page.h"
-
-//!!--------------------------------------------------------------
-
 
 
 //!! AT command state changed callback function
@@ -90,37 +86,13 @@ void Client_Requested(void *evt)
 {
     //!! Take the server
     server_t * server = (server_t *)evt;
-    client_t * client = server->client;
 
     //!! Is it come with a client?
     if(server->client != NULL)
     {
-        //!! homepage (index.html or empty)
-        if( !strcmp(client->getBuffer, "") || !strcmp(client->getBuffer, "index.html")  )
-        {
-            client->data = homeHtml;
-        }
-        //!! Get the app.css
-        else if( !strcmp(client->getBuffer, "app.css") ) 
-        {
-            client->data = appCss;
-        }
-        //!! Get the app.js
-        else if( !strcmp(client->getBuffer, "app.js") ) 
-        {
-            client->data = appJs;
-        }
-        //!!Get the favicon.ico
-        else if( !strcmp(client->getBuffer, "favicon.ico") )
-        {
-            client->data = faviconIco;
-        }
-        //!!------------------------------------------------------------------------------
-        //!!
         //!! Check the get command
         //!! The response message can be storaged in heap memory or flash (constant string)
-        //!!
-        else if( str_compare(server->client->getBuffer, "adc1") )
+        if( !strcmp(server->client->getBuffer, "adc1") )
         {
             //!! Allocate memory for storing response data
             //!! This memory will be freed after all bytes are sent
@@ -138,7 +110,7 @@ void Client_Requested(void *evt)
             server->client->data = buff;//"HELLO WORLD!";
 
         }
-        else if( str_compare(server->client->getBuffer, "led3-inv") )
+        else if (!strcmp(server->client->getBuffer, "led3-inv"))
         {
             //!! Toggle the LED3
             LED3_Inv();

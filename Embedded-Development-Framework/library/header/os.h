@@ -2,8 +2,9 @@
  * File:    os.h                                            *
  * Author:  Dr.Santi Nuratch                                *
  *          Embedded Computing and Control Laboratory       *
- * Update:  16 July  2017, 10:09 PM                         *
- * Update:  01 March 2018, 22:23 PM                         *
+ * Update:  16 July  2017, 10.09 PM                         *
+ * Update:  01 March 2018, 10.23 PM                         *
+ * Update:  10 March 2018, 07.59 AM                         *
  ************************************************************/
 
 #ifndef __OS_H__
@@ -23,8 +24,10 @@
 #include "psw.h"
 #include "adc.h"
 #include "beep.h"
+
 #include "stdarg.h"
-#include "looper.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 typedef void (*os_callback_t)(void *);
 
@@ -46,8 +49,8 @@ void OS_LooperSleep(looper_t *looper, uint16_t sleepTicks);
 void OS_LooperWeakup(looper_t *looper);
 void OS_LooperService(void);
 
-//!!
-//!!
+//!! 
+//!! 
 //!!
 
 #define U1_EVT_RX_RECV 0  // u1 rx byte received
@@ -135,6 +138,8 @@ void OS_Sleep(uint16_t ticks);
 
 void OS_Execute(void);
 
+
+
 //
 // Internally call function
 //
@@ -143,16 +148,14 @@ void OS_TimeService(void);
 #define OS_Init()                     \
     {                                 \
         MCU_Init();                   \
+        __delay_ms(1000);             \
         UART_Init(UART_ID_1, 115200); \
         UART_Init(UART_ID_2, 115200); \
         LED_Init();                   \
         ADC_Init();                   \
         PSW_Init();                   \
         Beep_Init();                  \
-        OS_LooperInit();              \
         OS_Initialise();              \
-        __delay_ms(1000);             \
-        UART1_AsyncWriteString("\r\nReady!\r\n");\
     }
 
 #define OS_Start()          \
