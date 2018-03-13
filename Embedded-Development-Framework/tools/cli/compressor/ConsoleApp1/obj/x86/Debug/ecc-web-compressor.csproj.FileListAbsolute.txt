@@ -1,0 +1,7 @@
+C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\tools\cli\compressor\ConsoleApp1\bin\x86\Debug\ConsoleApp1.exe.config
+C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\tools\cli\compressor\ConsoleApp1\bin\x86\Debug\ConsoleApp1.exe
+C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\tools\cli\compressor\ConsoleApp1\bin\x86\Debug\ConsoleApp1.pdb
+C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\tools\cli\compressor\ConsoleApp1\obj\x86\Debug\ecc-web-compressor.csprojResolveAssemblyReference.cache
+C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\tools\cli\compressor\ConsoleApp1\obj\x86\Debug\ecc-web-compressor.csproj.CoreCompileInputs.cache
+C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\tools\cli\compressor\ConsoleApp1\obj\x86\Debug\ConsoleApp1.exe
+C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\tools\cli\compressor\ConsoleApp1\obj\x86\Debug\ConsoleApp1.pdb
