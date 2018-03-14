@@ -29,6 +29,9 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+
+#define OS_RestartMcu() __asm__ volatile ("reset")
+
 typedef void (*os_callback_t)(void *);
 
 //!!

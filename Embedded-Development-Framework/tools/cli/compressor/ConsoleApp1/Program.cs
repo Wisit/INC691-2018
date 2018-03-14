@@ -15,7 +15,7 @@ namespace EccWebCompressor
             Console.WriteLine("ecc-web-compressor version 0.0");
 
 
-            string pageRoot = @"C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\dev\dev08_all_commands\webpage\";
+            string pageRoot = @"C:\Users\santi\Desktop\INC691-2018\Embedded-Development-Framework\dev\dev10_response_header\webpage\";
             string indexHtml = "index";
             string indexCss = "index";
             string indexJs = "index";
