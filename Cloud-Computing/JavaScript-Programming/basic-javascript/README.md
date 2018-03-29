@@ -1,6 +1,6 @@
 
 
-## Basic Examples
+## Basic JavaScript Programming (Examples)
 All examples provided here are some basics of general JavaScript programming. Click on the item to see its details
 
  - [ex01\_getting\_start](https://github.com/drsanti/INC362-2018/tree/master/examples/ex01_getting_start "ex01_getting_start")
