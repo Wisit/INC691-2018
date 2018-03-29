@@ -95,7 +95,7 @@ numArr.splice(3, 2);          // remove items at index3 and index4
 console.log('After splice: ', numArr);
 
 console.log('Before splice:', strArr);
-const remIdx = strArr.indexOf("dog") // finds the position (index) of the "dog"
+const remIdx = strArr.indexOf("dog") // find/search the position (index) of the "dog"
 strArr.splice(remIdx, 1);            // remove the "dog" from the strArr
 console.log('After splice: ', strArr);
 
