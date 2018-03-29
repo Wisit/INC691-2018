@@ -1,4 +1,5 @@
 
+
 ## Basic Examples
 All examples provided here are some basics of general JavaScript programming. Click on the item to see its details
 
@@ -11,3 +12,5 @@ All examples provided here are some basics of general JavaScript programming. Cl
  - [ex07\_var\_let_const](https://github.com/drsanti/INC362-2018/tree/master/examples/ex07_var_let_const "ex07_var_let_const")
  - [ex08_setTimeout](https://github.com/drsanti/INC362-2018/tree/master/examples/ex08_setTimeout "ex08_setTimeout")
  - [ex09_setInterval](https://github.com/drsanti/INC362-2018/tree/master/examples/ex09_setInterval "ex09_setInterval")
+ - [ex10_array](https://github.com/drsanti/INC362-2018/tree/master/examples/ex10_array "ex10_array")
+ - [ex11_object](https://github.com/drsanti/INC362-2018/tree/master/examples/ex11_object "ex11_object")
