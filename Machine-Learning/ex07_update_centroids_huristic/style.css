@@ -1,0 +1,128 @@
+body{
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    background-color:#555;
+    color: #eee;
+    font-family: Helvetica;
+}
+
+.row .col #wrapper  {
+    padding: 0;
+    margin: 0;  
+}
+
+
+#wrapper {
+    background-color: #111;
+}
+
+.box-wrapper {
+    width: 100%;
+    background-color:#013f16;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-top: 8px;
+    padding-bottom: 10px;
+    font-size: 20px;
+    font-weight: 400;
+    color:#ccc;
+
+}
+
+
+
+.box-data > .box-items {
+    float: left;
+}
+
+.box-data > .box-items > .mgl-20 {
+    margin-left: 20px;
+}
+
+.mgt-20 {
+    margin-top: 50px;
+}
+
+
+/* Numeric Inputs */
+.box-data > .box-items > .ecc-input {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 40px;
+    width: 80px;  
+    height: 40px;
+    margin-top: 2px;
+    margin-left: 0px;
+    padding-right: 5px;
+    border-radius: 6px;
+    text-align: right;
+    background-color: #111;
+    user-select: none;
+    margin-top: 5px;
+    user-select: none;
+}
+/* input-x */
+.box-data > .box-items .input-x {
+    color:#5a5;
+    border: 2px solid limegreen;
+}
+/* input-x:hover */
+.box-data > .box-items > .input-x:hover {
+    color:#5f5;
+    background-color: #131;
+}
+/* input-y */
+.box-data > .box-items .input-y {
+    color:rgba(194, 191, 5, 0.897);
+    border: 2px solid yellow;   
+}
+/* input-y:hover */
+.box-data > .box-items > .input-y:hover {
+    color: yellow;
+    background-color: rgb(44, 38, 3)
+}
+
+/* input-p */
+.box-data > .box-items .input-p {
+    color:rgba(155, 6, 110, 0.897);
+    border: 2px solid rgb(255, 42, 173);   
+}
+/* input-p:hover */
+.box-data > .box-items > .input-p:hover {
+    color: rgb(255, 54, 245);
+    background-color: rgb(54, 3, 43)
+}
+
+
+
+/* ecc-button */
+.box-data > .box-items > .ecc-button {
+    color:rgb(54, 181, 255);
+    font-size: 20px;
+    font-weight: 500;
+    width: 100px;
+    height: 40px;
+    line-height: 35px;
+    text-align:center;
+    border-radius: 8px;
+    border: 2px solid rgb(61, 204, 240);
+    background-color: #111;
+    user-select: none;
+    margin-top: 5px;
+}
+
+/* ecc-button:hover */
+.box-data > .box-items > .ecc-button:hover {
+    color:rgb(85, 244, 255);
+    background-color: rgb(1, 51, 66);
+    user-select: none;
+}
+/* btn-random and btn-generate */
+.box-data > .box-items > #btn-random, #btn-generate {
+    margin-left: 5px;
+}
+/* btn-clear */
+.box-data > .box-items > #btn-clear {
+    margin-left: 40px;  
+}

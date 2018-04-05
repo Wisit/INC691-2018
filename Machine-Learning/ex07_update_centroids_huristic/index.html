@@ -1,0 +1,158 @@
+<html>
+
+<head>
+    <title>ECC-Lab ML</title>
+    <link rel="stylesheet" href="../libs/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="row">
+        <div id='box-wrapper' class='box-wrapper wrapper-x' style='display:none;'>
+            <div class="box-data">
+                <!-- Mean-X -->
+                <div class='box-items'>
+                    <label class='box-label mgl-20' for="mean-x">x&mu;(mean):</label>
+                    <input type="text" value='300' id='mean-x' class='ecc-input input-x' />
+                </div>
+                <!-- Sigma-X -->
+                <div class='box-items'>
+                    <label class='box-label mgl-20' for="sigma-x">x&sigma;(sigma):</label>
+                    <input type="text" value='50' id='sigma-x' class='ecc-input input-x' />
+                </div>
+            </div>
+
+
+            <div class="box-data">
+                <!-- Mean-Y -->
+                <div class='box-items'>
+                    <label class='box-label mgl-20' for="mean-y">y&mu;(mean):</label>
+                    <input type="text" value='300' id='mean-y' class='ecc-input input-y' />
+                </div>
+                <!-- Sigma-Y -->
+                <div class='box-items'>
+                    <label class='box-label mgl-20' for="sigma-y">y&sigma;(sigma):</label>
+                    <input type="text" value='50' id='sigma-y' class='ecc-input input-y' />
+                </div>
+            </div>
+
+            <div class="box-data">
+                <!-- Points -->
+                <div class='box-items'>
+                    <label class='box-label mgl-20' for="points">points:</label>
+                    <input type="text" max='500' min='1' value='20' id='points' class='ecc-input input-p' />
+                </div>
+            </div>
+
+
+            <div class="box-data">
+                <div class='box-items'>
+
+                    <input type="button" id='btn-clear' value='Clear All' class='ecc-button' />
+                    <input type="button" id='btn-generate' value='Generate' class='ecc-button' />
+                    <input type="button" id='btn-random' value='Random' class='ecc-button' />
+                    <input type="button" id='btn-start' value='Start' class='ecc-button' />
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Canvas -->
+    <div class="row">
+        <div class="col col-xs-12">
+            <div id='wrapper' style='display:none;'>
+                <canvas id='canvas'></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src='../libs/ecc-dsci-mlearn.js'></script>
+    <script src='./index.js'></script>
+
+    <script>
+        $(() => {
+
+            const KM = new KMeans();
+
+            //!! 
+            $('#canvas').dblclick((event) => {
+                let meanX = event.offsetX;
+                let meanY = event.offsetY;
+                let sigmaX = Math.random() * 100;
+                let sigmaY = Math.random() * 100;
+                let points = Math.floor(20 + Math.random() * 80);
+                $('#mean-x').val(meanX.toFixed(2));
+                $('#sigma-x').val(sigmaX.toFixed(2));
+                $('#mean-y').val(meanY.toFixed(2));
+                $('#sigma-y').val(sigmaY.toFixed(2));
+                $('#points').val(points.toFixed(0));
+                KM.addPoints(meanX, sigmaX, meanY, sigmaY, points);
+            });
+
+            doRandomAdd();
+            doRandomAdd();
+            doRandomAdd();
+            doRandomAdd();
+
+            
+
+            //!! Make the control panel to center of the page
+            $('#box-wrapper').fadeIn(500);
+            $('#wrapper').fadeIn(1000);
+
+            //!! Start
+            KM.start();
+
+            //!! Clear
+            $('#btn-clear').on('click', () => {
+                KM.clearPoints();
+            });
+            
+            //!! Start
+            $('#btn-start').on('click', () => {
+                KM.start();
+            });
+
+            //!! Generate
+            $('#btn-generate').on('click', () => {
+                let meanX = parseFloat($('#mean-x').val());
+                let sigmaX = parseFloat($('#sigma-x').val());
+                let meanY = parseFloat($('#mean-y').val());
+                let sigmaY = parseFloat($('#sigma-y').val());
+                let points = parseInt($('#points').val());
+                $('#points-x').val(points);
+                KM.addPoints(meanX, sigmaX, meanY, sigmaY, points);
+            });
+
+            //!! Random
+            $('#btn-random').on('click', () => {
+                doRandomAdd();
+            });
+
+            function doRandomAdd(xpos, ypos) {
+                xpos = (xpos==null || xpos==undefined)?window.innerWidth/2  : xpos;
+                ypos = (ypos==null || ypos==undefined)?window.innerHeight/2 : ypos;
+                
+                //!! X
+                let meanX = xpos + (Math.random() * window.innerWidth/4) - window.innerWidth/8;
+                meanX += Math.random() * meanX/4;
+                let sigmaX = meanX/10 + Math.random() * meanX/5;
+    
+                //!! Y
+                let meanY = ypos + (Math.random() * window.innerHeight/4) - window.innerHeight/8;
+                let sigmaY = meanY/10 + Math.random() * meanY/5;
+
+                //!! Points
+                let points = Math.floor(20 + Math.random() * 80);
+
+                $('#mean-x').val(meanX.toFixed(2));
+                $('#sigma-x').val(sigmaX.toFixed(2));
+                $('#mean-y').val(meanY.toFixed(2));
+                $('#sigma-y').val(sigmaY.toFixed(2));
+                $('#points').val(points.toFixed(0));
+
+                KM.addPoints(meanX, sigmaX, meanY, sigmaY, points);
+            }
+        });
+    </script>
+</body>
+</html>
