@@ -91,18 +91,15 @@ function KMeans() {
             datapoints[i].color = null; 
         }
 
-        
-        let cenDist = 0;
-        let numIterations = 0;
+        //!! Clear
+        cenDist = 0;
+        numIterations = 0;
 
         viewer.draw(datapoints, true);
         viewer.draw(centroids);
         doKMeans();   
     }
 
-
-
-    
     function doKMeans() {
         let colors = [
             'rgba(255,0,0,0.5)', 
