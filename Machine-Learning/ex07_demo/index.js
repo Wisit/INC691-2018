@@ -1,22 +1,28 @@
 
+/**************************************************************************
+ * Simple data analysis and machine learning library used for INC691      *
+ * Dr.Santi Nuratch                                                       * 
+ * Embedded Computing and Control Laboratory                              *
+ * ECC-Lab | INC@KMUTT                                                    *
+ * 01 April 2018                                                          *
+ **************************************************************************/
+
 /**
- * 2-D data generation and visualization
- * Update/move centroids basd on Eucredient distances
+ * Kmean
  */
-
 function KMeans() {
-
+    const colors5 = ['#f00', '#0f0', '#ff0', '#f0f', '#0ff'];
     let animimator = null;
     const canvasWidth  = JsUtils.getWindowWidth();
     const canvasHeight = JsUtils.getWindowHeight();
-
     let viewer = new PointViewer('canvas', canvasWidth, canvasHeight);
     let point = new PointData();
 
-
-    const colors5 = ['#f00', '#0f0', '#ff0', '#f0f', '#0ff'];
-
-
+    /**
+     * 
+     * @param {number} min minimum value
+     * @param {number} max maximum value
+     */
     function randInt(min, max) {
         return Math.floor(min + Math.random() * (max-min));
     }
@@ -47,9 +53,10 @@ function KMeans() {
         }
     }
 
+
     
     /**
-     * Example 1 Update centoids (Slow motion)
+     * Update centoids (Slow motion)
      */
     let cenDist = 0;
     let numIterations = 0;
@@ -57,24 +64,33 @@ function KMeans() {
     const TERMINATION_TH = 10
 
 
-
+    /**
+     * 
+     * @param {number} muX mean x
+     * @param {number} sigmaX sigma x
+     * @param {number} muY mean y
+     * @param {number} sigmaY sigma y
+     * @param {number} points number of points
+     */
     this.addPoints = function(muX, sigmaX, muY, sigmaY, points) {
-        //console.log(muX, sigmaX, muY, sigmaY, points);
         let pts = point.randomMultiplePoints(muX, sigmaX, muY, sigmaY, points); 
         datapoints = datapoints.concat(pts);
         viewer.draw(datapoints, true);
-        //viewer.draw(centroids);
-        //doKMeans();
     }
 
+    /**
+     * Remove all points
+     */
     this.clearPoints = function() {
         cancelAnimationFrame(animimator); 
         datapoints = [];  
         centroids = [];
         viewer.draw(datapoints, true); 
-        //viewer.draw(centroids);
     }
 
+    /**
+     * Start the k-means 
+     */
     this.start = function() {
         if(datapoints.length <= 0) {
             let pts = point.randomMultiplePoints(canvasWidth/2, canvasWidth/8, canvasHeight/2, canvasHeight/8, Math.floor(100+Math.random()*100)); 
@@ -83,7 +99,6 @@ function KMeans() {
 
         //!! Create centroids based on Mu
         initCentroids();
-
 
         //!!
         for(let i=0; i<datapoints.length; i++) {
@@ -100,6 +115,9 @@ function KMeans() {
         doKMeans();   
     }
 
+    /**
+     * Entry point
+     */
     function doKMeans() {
         let colors = [
             'rgba(255,0,0,0.5)', 
@@ -112,7 +130,6 @@ function KMeans() {
         let pIdx = 0;   //!! point index
         let dist = [];  //!! distance between points to a centroid
 
-        
         //!! Remove members from the centroids and assign to group i
         for(let i=0; i<centroids.length; i++) {
             centroids[i].members = [];  // remove all memberas
@@ -120,7 +137,9 @@ function KMeans() {
         }
 
 
-
+        /**
+         * Print information to screen
+         */
         function printInfo() {
             let ypos = 20;
             let xpos = 10;
@@ -130,7 +149,7 @@ function KMeans() {
             viewer.print('Embedded Computing and Control Laboratory', xpos, nextY(), 'rgba(50,255,85,0.5)', 14);
             viewer.print('ECC-Lab | INC-KMUTT', xpos, nextY(), 'rgba(255,150,50,0.5)', 14);
             viewer.print('02 April 2018', xpos, nextY(), 'rgba(155,155,255,0.5)', 14);
-            // viewer.print('---------------------------------------------------', 10, 120, 'rgba(155,155,155,0.5)', 14);
+            
 
             nextY(); // add empty line
             for(let i=0; i<centroids.length; i++) {
@@ -143,7 +162,9 @@ function KMeans() {
         }
 
 
-
+        /**
+         * Move the centroid
+         */
         function doCentroidAdaptation() {
         //let timer = setInterval( () => {
             viewer.draw(datapoints, true);  //!! clear screen and draw points
@@ -173,11 +194,9 @@ function KMeans() {
                 }
             }
 
-           
             //!! assign to the class and give it color
             p.color = colors[classIdx];
             p.group = classIdx;
-
 
             //!! Check if it is alreader added
             let alreadyAdded = false;
@@ -230,13 +249,9 @@ function KMeans() {
             centroids[classIdx].x = sx/centroids[classIdx].members.length;
             centroids[classIdx].y = sy/centroids[classIdx].members.length;
 
-            
-
             //!! Print system information
             printInfo();
-            
-          
-            
+
             //!!
             if(++pIdx >= datapoints.length) {
                 pIdx = 0;
@@ -260,7 +275,5 @@ function KMeans() {
 
         doCentroidAdaptation();
     } 
-
-    
 }
 
